@@ -1,13 +1,14 @@
 package luonght0366.edu.ut.vn.huynhtuanluong.vehicleservice.services;
 
+import jakarta.transaction.Transactional;
 import luonght0366.edu.ut.vn.huynhtuanluong.vehicleservice.dtos.PhuongTienDTO;
 import luonght0366.edu.ut.vn.huynhtuanluong.vehicleservice.modules.PhuongTien;
 import luonght0366.edu.ut.vn.huynhtuanluong.vehicleservice.repositories.IPhuongTienRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class PhuongTienService implements IPhuongTienService {
@@ -15,21 +16,30 @@ public class PhuongTienService implements IPhuongTienService {
     @Autowired
     private IPhuongTienRepository phuongTienRepository;
 
+    private static final String LICENSE_PLATE_REGEX = "^\\d{2}[A-Z]-\\d{4,5}$";
+
     @Transactional
     @Override
     public PhuongTien themPhuongTien(PhuongTienDTO dto) {
+        validateCreate(dto);
 
-        // Kiểm tra trùng VIN hoặc Biển số
-        if (phuongTienRepository.existsByVinOrBienSo(dto.getVin(), dto.getBienSo())) {
-            throw new RuntimeException("VIN hoặc Biển số đã tồn tại!");
+        if (phuongTienRepository.existsByVin(dto.getVin().trim())) {
+            throw new IllegalArgumentException("VIN đã tồn tại");
+        }
+
+        if (phuongTienRepository.existsByBienSo(dto.getBienSo().trim())) {
+            throw new IllegalArgumentException("Biển số đã tồn tại");
         }
 
         PhuongTien v = new PhuongTien();
-        v.setVin(dto.getVin());
-        v.setBienSo(dto.getBienSo());
-        v.setLoaiXe(dto.getLoaiXe());
+        v.setVin(dto.getVin().trim());
+        v.setBienSo(dto.getBienSo().trim().toUpperCase());
+        v.setLoaiXe(dto.getLoaiXe().trim());
         v.setMaTaiXe(dto.getMaTaiXe());
-        v.setMaPin(dto.getMaPin()); // có thể null
+
+        // Theo test Postman: tạo xe chưa được gắn pin.
+        // Muốn gắn pin thì dùng API /link-pin/{pinId}
+        v.setMaPin(null);
 
         return phuongTienRepository.save(v);
     }
@@ -46,42 +56,58 @@ public class PhuongTienService implements IPhuongTienService {
 
     @Override
     public boolean xoaPhuongTien(Long id) {
-        try {
-            phuongTienRepository.deleteById(id);
-            return true;
-        } catch (Exception e) {
+        if (!phuongTienRepository.existsById(id)) {
             return false;
         }
+
+        phuongTienRepository.deleteById(id);
+        return true;
     }
 
     @Transactional
     @Override
     public PhuongTien suaPhuongTien(Long id, PhuongTienDTO dto) {
-        return phuongTienRepository.findById(id).map(v -> {
-            // Nếu người dùng muốn đổi VIN/biển số – kiểm tra trùng
-            boolean doiVin = dto.getVin() != null && !dto.getVin().equals(v.getVin());
-            boolean doiBienSo = dto.getBienSo() != null && !dto.getBienSo().equals(v.getBienSo());
-            if (doiVin || doiBienSo) {
-                if (phuongTienRepository.existsByVinOrBienSo(
-                        doiVin ? dto.getVin() : v.getVin(),
-                        doiBienSo ? dto.getBienSo() : v.getBienSo()
-                )) {
-                    // Có thể refine để bỏ qua bản ghi hiện tại nếu cần,
-                    // nhưng với yêu cầu cơ bản thì thông báo trùng là đủ:
-                    throw new RuntimeException("VIN hoặc Biển số đã được sử dụng!");
-                }
+        PhuongTien v = phuongTienRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Không tìm thấy phương tiện"));
+
+        validateUpdate(dto);
+
+        if (dto.getVin() != null && !dto.getVin().trim().equals(v.getVin())) {
+            String newVin = dto.getVin().trim();
+
+            if (phuongTienRepository.existsByVinAndMaPhuongTienNot(newVin, id)) {
+                throw new IllegalArgumentException("VIN đã tồn tại");
             }
 
-            if (dto.getVin() != null) v.setVin(dto.getVin());
-            if (dto.getBienSo() != null) v.setBienSo(dto.getBienSo());
-            if (dto.getLoaiXe() != null) v.setLoaiXe(dto.getLoaiXe());
-            if (dto.getMaTaiXe() != null) v.setMaTaiXe(dto.getMaTaiXe());
-            // maPin để dành cho 2 API riêng: liên kết / huỷ liên kết
-            return phuongTienRepository.save(v);
-        }).orElseThrow(() -> new RuntimeException("Không tìm thấy phương tiện!"));
-    }
+            v.setVin(newVin);
+        }
 
-    // ================== Theo đề: quản lý danh sách xe theo tài xế ==================
+        if (dto.getBienSo() != null && !dto.getBienSo().trim().equalsIgnoreCase(v.getBienSo())) {
+            String newBienSo = dto.getBienSo().trim().toUpperCase();
+
+            if (phuongTienRepository.existsByBienSoAndMaPhuongTienNot(newBienSo, id)) {
+                throw new IllegalArgumentException("Biển số đã tồn tại");
+            }
+
+            v.setBienSo(newBienSo);
+        }
+
+        if (dto.getLoaiXe() != null) {
+            if (isBlank(dto.getLoaiXe())) {
+                throw new IllegalArgumentException("Loại xe không được để trống");
+            }
+            v.setLoaiXe(dto.getLoaiXe().trim());
+        }
+
+        if (dto.getMaTaiXe() != null) {
+            v.setMaTaiXe(dto.getMaTaiXe());
+        }
+
+        // Không update maPin ở API update vehicle.
+        // maPin chỉ xử lý ở link-pin / unlink-pin.
+
+        return phuongTienRepository.save(v);
+    }
 
     @Override
     public List<PhuongTien> danhSachTheoTaiXe(Long maTaiXe) {
@@ -92,7 +118,12 @@ public class PhuongTienService implements IPhuongTienService {
     @Override
     public PhuongTien lienKetPin(Long maPhuongTien, Long maPin) {
         PhuongTien v = phuongTienRepository.findById(maPhuongTien)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy phương tiện!"));
+                .orElseThrow(() -> new NoSuchElementException("Không tìm thấy phương tiện"));
+
+        if (maPin == null) {
+            throw new IllegalArgumentException("Mã pin không được để trống");
+        }
+
         v.setMaPin(maPin);
         return phuongTienRepository.save(v);
     }
@@ -101,8 +132,62 @@ public class PhuongTienService implements IPhuongTienService {
     @Override
     public PhuongTien huyLienKetPin(Long maPhuongTien) {
         PhuongTien v = phuongTienRepository.findById(maPhuongTien)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy phương tiện!"));
+                .orElseThrow(() -> new NoSuchElementException("Không tìm thấy phương tiện"));
+
         v.setMaPin(null);
         return phuongTienRepository.save(v);
+    }
+
+    private void validateCreate(PhuongTienDTO dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Dữ liệu JSON không hợp lệ");
+        }
+
+        if (isBlank(dto.getVin())) {
+            throw new IllegalArgumentException("VIN không được để trống");
+        }
+
+        if (isBlank(dto.getBienSo())) {
+            throw new IllegalArgumentException("Biển số không được để trống");
+        }
+
+        if (isBlank(dto.getLoaiXe())) {
+            throw new IllegalArgumentException("Loại xe không được để trống");
+        }
+
+        if (dto.getMaTaiXe() == null) {
+            throw new IllegalArgumentException("Mã tài xế không được để trống");
+        }
+
+        validateLicensePlate(dto.getBienSo());
+    }
+
+    private void validateUpdate(PhuongTienDTO dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Dữ liệu JSON không hợp lệ");
+        }
+
+        if (dto.getVin() != null && isBlank(dto.getVin())) {
+            throw new IllegalArgumentException("VIN không được để trống");
+        }
+
+        if (dto.getBienSo() != null) {
+            if (isBlank(dto.getBienSo())) {
+                throw new IllegalArgumentException("Biển số không được để trống");
+            }
+            validateLicensePlate(dto.getBienSo());
+        }
+    }
+
+    private void validateLicensePlate(String bienSo) {
+        String value = bienSo.trim().toUpperCase();
+
+        if (!value.matches(LICENSE_PLATE_REGEX)) {
+            throw new IllegalArgumentException("Dữ liệu JSON sai định dạng hoặc biển số không hợp lệ");
+        }
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }
