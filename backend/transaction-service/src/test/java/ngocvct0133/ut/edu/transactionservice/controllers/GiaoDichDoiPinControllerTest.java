@@ -8,6 +8,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,5 +27,26 @@ class GiaoDichDoiPinControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createTransactionWithInvalidStatusShouldReturn400() throws Exception {
+        mockMvc.perform(post("/api/transaction-service/giaodichdoipin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "maPinTra": "PIN-001",
+                                  "maPinNhan": "PIN-002",
+                                  "ngayGiaoDich": "2026-05-29T10:15:30",
+                                  "trangThaiGiaoDich": "INVALID_STATUS",
+                                  "thanhtien": 1200000,
+                                  "phuongThucThanhToan": "cash",
+                                  "maTram": 1,
+                                  "maTaiXe": 2
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(giaoDichDoiPinService);
     }
 }

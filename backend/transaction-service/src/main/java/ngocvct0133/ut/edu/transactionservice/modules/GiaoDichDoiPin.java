@@ -3,6 +3,7 @@ package ngocvct0133.ut.edu.transactionservice.modules;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +20,7 @@ public class GiaoDichDoiPin {
     @NotNull(message = "ngayGiaoDich is required")
     private LocalDateTime ngayGiaoDich;
     @NotBlank(message = "trangThaiGiaoDich is required")
+    @Pattern(regexp = "^(Đang xử lý|Đã hoàn thành)$", message = "trangThaiGiaoDich is invalid")
     private String trangThaiGiaoDich;
     @NotNull(message = "thanhtien is required")
     private double thanhtien;
