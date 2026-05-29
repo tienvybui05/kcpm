@@ -3,6 +3,8 @@ package datdq0317.edu.ut.vn.dinhquocdat.userservice.dtos;
 import datdq0317.edu.ut.vn.dinhquocdat.userservice.models.NguoiDung;
 
 public class LoginResponse {
+
+    private String message; // THÊM
     private String token;
     private String role;
     private String email;
@@ -11,12 +13,21 @@ public class LoginResponse {
     private String hoTen;
 
     public LoginResponse(String token, NguoiDung user) {
+        this.message = "Đăng nhập thành công"; // THÊM
         this.token = token;
         this.role = user.getVaiTro();
         this.email = user.getEmail();
         this.soDienThoai = user.getSoDienThoai();
         this.userId = user.getMaNguoiDung();
         this.hoTen = user.getHoTen();
+    }
+
+    public String getMessage() { // THÊM
+        return message;
+    }
+
+    public void setMessage(String message) { // THÊM
+        this.message = message;
     }
 
     public String getToken() {
@@ -66,5 +77,4 @@ public class LoginResponse {
     public void setHoTen(String hoTen) {
         this.hoTen = hoTen;
     }
-    // getters
 }
