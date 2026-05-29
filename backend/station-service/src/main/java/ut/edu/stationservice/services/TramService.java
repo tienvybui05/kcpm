@@ -33,6 +33,24 @@ public class TramService implements ITramService {
             throw new RuntimeException("Địa chỉ rỗng");
         }
 
+        if (tram.getDiaChi().length() > 250) {
+            throw new RuntimeException("Tên trạm lố 250 kí tự");
+        }
+
+        if (tram.getKinhDo() == null) {
+            throw new RuntimeException("kinh độ bị rỗng");
+        }
+        if (tram.getKinhDo() < -180 || tram.getKinhDo() > 180) {
+            throw new RuntimeException("kinh độ vượt biên (>180)");
+        }
+
+        if (tram.getViDo() == null) {
+            throw new RuntimeException("Vĩ độ bị rỗng");
+        }
+        if (tram.getViDo() < -90 || tram.getViDo() > 90) {
+            throw new RuntimeException("vĩ độ vượt biên (>90)");
+        }
+
         tram.setTenTram(tram.getTenTram().trim());
         return tramRepository.save(tram);
     }
