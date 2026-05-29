@@ -52,7 +52,23 @@ public class TaiXeService implements ITaiXeService{
         if (emailExists) {
             throw new RuntimeException("Email đã tồn tại!");
         }
+        // VALIDATE FORMAT SỐ ĐIỆN THOẠI
+        if (!dto.getSoDienThoai().matches("^0\\d{9}$")) {
+            throw new RuntimeException("Số điện thoại không hợp lệ");
+        }
+        // VALIDATE FORMAT EMAIL
+        if (!dto.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+        throw new RuntimeException("Định dạng email không hợp lệ");
+        }
+        // VALIDATE NGÀY SINH
+        if (dto.getNgaySinh() == null) {
+        throw new RuntimeException("Ngày sinh không hợp lệ");
+        }
 
+        // VALIDATE TUỔI >= 18
+        if (dto.getNgaySinh().isAfter(LocalDate.now().minusYears(18))) {
+        throw new RuntimeException("Tài xế phải từ 18 tuổi trở lên");
+        }
         NguoiDung nd = new NguoiDung();
         nd.setHoTen(dto.getHoTen());
         nd.setEmail(dto.getEmail());
