@@ -103,6 +103,32 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
+
+             // VALIDATE SỐ ĐIỆN THOẠI
+        if (request.getSoDienThoai() == null ||
+    request.getSoDienThoai().trim().isEmpty()) {
+
+    return ResponseEntity.badRequest().body(
+        Map.of("message", "Người dùng chưa nhập số điện thoại")
+    );
+}
+
+// VALIDATE FORMAT SỐ ĐIỆN THOẠI
+if (!request.getSoDienThoai().matches("^0\\d{9}$")) {
+
+    return ResponseEntity.badRequest().body(
+        Map.of("message", "Số điện thoại không đúng định dạng")
+    );
+}
+
+// VALIDATE MẬT KHẨU
+if (request.getMatKhau() == null ||
+    request.getMatKhau().trim().isEmpty()) {
+
+    return ResponseEntity.badRequest().body(
+        Map.of("message", "Người dùng chưa nhập mật khẩu")
+    );
+}
             // 🔒 KIỂM TRA LOGIN ATTEMPTS
             int attempts = redisService.getLoginAttempts(request.getSoDienThoai());
             if (attempts >= 5) {
@@ -111,18 +137,24 @@ public class AuthController {
                 );
             }
 
-            NguoiDung user = nguoiDungService.timTheoSoDienThoai(request.getSoDienThoai())
-                    .orElseThrow(() -> {
-                        // Tăng số lần thử sai
-                        redisService.incrementLoginAttempts(request.getSoDienThoai());
-                        return new RuntimeException("Sai số điện thoại hoặc mật khẩu  sai nha ấ");
-                    });
+           NguoiDung user = nguoiDungService.timTheoSoDienThoai(request.getSoDienThoai())
+                .orElse(null);
 
-            if (!passwordEncoder.matches(request.getMatKhau(), user.getMatKhau())) {
-                // Tăng số lần thử sai
+                    if (user == null) {
                 redisService.incrementLoginAttempts(request.getSoDienThoai());
-                throw new RuntimeException("Sai số điện thoại hoặc mật khẩu sai nhá ");
-            }
+
+                return ResponseEntity.status(401).body(
+                    Map.of("message", "Tài khoản không tồn tại.")
+                        );
+                    }
+
+           if (!passwordEncoder.matches(request.getMatKhau(), user.getMatKhau())) {
+            redisService.incrementLoginAttempts(request.getSoDienThoai());
+
+                return ResponseEntity.status(401).body(
+                Map.of("message", "Sai mật khẩu")
+                );
+                }
 
             // ✅ ĐĂNG NHẬP THÀNH CÔNG - Reset attempts
             redisService.resetLoginAttempts(request.getSoDienThoai());
@@ -131,8 +163,10 @@ public class AuthController {
             return ResponseEntity.ok(new LoginResponse(token, user));
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+        return ResponseEntity.status(401).body(
+        Map.of("message", e.getMessage())
+    );
+}
     }
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
