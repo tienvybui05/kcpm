@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
 
 import ut.edu.stationservice.models.Tram;
 import ut.edu.stationservice.services.ITramService;
@@ -41,13 +42,8 @@ public class TramController {
     }
 
     @PostMapping
-    public ResponseEntity<?> themTram(@RequestBody Tram tram) {
-        try {
-            Tram newTram = tramService.addPin(tram);
-            return ResponseEntity.ok(newTram);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<?> themTram(@Valid @RequestBody Tram tram) {
+        return ResponseEntity.ok(tramService.addPin(tram));
     }
 
     @PostMapping("/batch")

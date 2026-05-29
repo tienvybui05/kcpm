@@ -18,10 +18,14 @@ public class TramService implements ITramService {
     @Transactional
     @Override
     public Tram addPin(Tram tram) {
-        // Kiểm tra trùng tên trạm
-        if (tramRepository.existsByTenTram(tram.getTenTram())) {
+        if (tram.getTenTram() == null || tram.getTenTram().trim().isEmpty()) {
+            throw new RuntimeException("Tên trạm rỗng");
+        }
+        if (tramRepository.existsByTenTram(tram.getTenTram().trim())) {
             throw new RuntimeException("Tên trạm đã tồn tại!");
         }
+
+        tram.setTenTram(tram.getTenTram().trim());
         return tramRepository.save(tram);
     }
 
