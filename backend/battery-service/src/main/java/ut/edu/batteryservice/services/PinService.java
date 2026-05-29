@@ -2,7 +2,9 @@ package ut.edu.batteryservice.services;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import ut.edu.batteryservice.models.Pin;
 import ut.edu.batteryservice.repositories.IPinRepository;
 
@@ -34,8 +36,6 @@ public class PinService implements IPinService {
     @Transactional
     @Override
     public Pin updatePinType(Long id, Pin pin) {
-        validatePin(pin);
-
         return pinRepository.findById(id).map(existing -> {
             existing.setLoaiPin(pin.getLoaiPin());
             existing.setDungLuong(pin.getDungLuong());
@@ -98,11 +98,27 @@ public class PinService implements IPinService {
 
     private void validatePin(Pin pin) {
         if (pin == null) {
-            throw new RuntimeException("Dữ liệu pin không được rỗng");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dữ liệu pin không được rỗng");
         }
 
         if (pin.getLoaiPin() == null || pin.getLoaiPin().trim().isEmpty()) {
-            throw new RuntimeException("Loại pin không được để trống");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Loại pin không được để trống");
         }
+
+        if (isNullOrLessThanOrEqualZero(pin.getDungLuong())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dung lượng pin phải lớn hơn 0");
+        }
+
+        if (isNullOrOutOfRange(pin.getSucKhoe(), 0, 100)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sức khỏe pin phải nằm trong khoảng 0 đến 100");
+        }
+    }
+
+    private boolean isNullOrLessThanOrEqualZero(Number value) {
+        return value == null || value.doubleValue() <= 0;
+    }
+
+    private boolean isNullOrOutOfRange(Number value, double min, double max) {
+        return value == null || value.doubleValue() < min || value.doubleValue() > max;
     }
 }
