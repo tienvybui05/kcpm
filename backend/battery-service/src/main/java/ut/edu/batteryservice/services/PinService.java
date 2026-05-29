@@ -36,6 +36,8 @@ public class PinService implements IPinService {
     @Transactional
     @Override
     public Pin updatePinType(Long id, Pin pin) {
+        validatePin(pin);
+
         return pinRepository.findById(id).map(existing -> {
             existing.setLoaiPin(pin.getLoaiPin());
             existing.setDungLuong(pin.getDungLuong());
