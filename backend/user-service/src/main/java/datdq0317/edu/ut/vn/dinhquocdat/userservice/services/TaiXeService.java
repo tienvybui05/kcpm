@@ -28,6 +28,10 @@ public class TaiXeService implements ITaiXeService{
 
     @Override
     public TaiXe themTaiXe(TaiXeDTO dto) {
+         // VALIDATE EMAIL
+        if (dto.getEmail() == null || dto.getEmail().trim().isEmpty()) {
+        throw new RuntimeException("Người dùng chưa cung cấp email");
+        }
         // Kiểm tra email trùng
         nguoiDungRepository.findByEmail(dto.getEmail()).ifPresent(u -> {
             throw new RuntimeException("Email đã tồn tại!");
