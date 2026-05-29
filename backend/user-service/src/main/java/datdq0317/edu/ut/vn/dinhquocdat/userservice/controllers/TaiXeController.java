@@ -1,8 +1,9 @@
 package datdq0317.edu.ut.vn.dinhquocdat.userservice.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import datdq0317.edu.ut.vn.dinhquocdat.userservice.models.NhanVien;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,7 +19,6 @@ import datdq0317.edu.ut.vn.dinhquocdat.userservice.dtos.TaiXeDTO;
 import datdq0317.edu.ut.vn.dinhquocdat.userservice.dtos.TaiXeResponse;
 import datdq0317.edu.ut.vn.dinhquocdat.userservice.models.TaiXe;
 import datdq0317.edu.ut.vn.dinhquocdat.userservice.services.ITaiXeService;
-
 @RestController
 @RequestMapping("/api/user-service/taixe")
 public class TaiXeController {
@@ -57,13 +57,23 @@ public class TaiXeController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> suaTaiXe(@PathVariable Long id, @RequestBody TaiXeDTO dto) {
-        try {
-            TaiXe updated = taiXeService.suaTaiXe(id, dto);
-            return ResponseEntity.ok(updated);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    try {
+        TaiXe updated = taiXeService.suaTaiXe(id, dto);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Cập nhật thông tin tài xế thành công");
+
+        // giữ structure cũ
+        response.put("maTaiXe", updated.getMaTaiXe());
+        response.put("bangLaiXe", updated.getBangLaiXe());
+        response.put("nguoiDung", updated.getNguoiDung());
+
+        return ResponseEntity.ok(response);
+
+    } catch (RuntimeException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
+}
 
    @DeleteMapping("/{id}")
 public ResponseEntity<?> xoaTaiXe(@PathVariable Long id) {
