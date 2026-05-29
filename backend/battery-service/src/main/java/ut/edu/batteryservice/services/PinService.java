@@ -27,15 +27,16 @@ public class PinService implements IPinService {
     @Transactional
     @Override
     public Pin createPinType(Pin pin) {
-        // ❌ Không còn validate rule nào
+        validatePin(pin);
         return pinRepository.save(pin);
     }
 
     @Transactional
     @Override
     public Pin updatePinType(Long id, Pin pin) {
+        validatePin(pin);
+
         return pinRepository.findById(id).map(existing -> {
-            // ❌ Không gọi validatePinState nữa
             existing.setLoaiPin(pin.getLoaiPin());
             existing.setDungLuong(pin.getDungLuong());
             existing.setTinhTrang(pin.getTinhTrang());
@@ -78,8 +79,6 @@ public class PinService implements IPinService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy pin!"));
     }
 
-
-
     @Transactional
     @Override
     public boolean deletePinType(Long id) {
@@ -93,7 +92,17 @@ public class PinService implements IPinService {
     @Transactional
     @Override
     public Pin addPin(Pin pin) {
-        // ❌ Không validate
+        validatePin(pin);
         return pinRepository.save(pin);
+    }
+
+    private void validatePin(Pin pin) {
+        if (pin == null) {
+            throw new RuntimeException("Dữ liệu pin không được rỗng");
+        }
+
+        if (pin.getLoaiPin() == null || pin.getLoaiPin().trim().isEmpty()) {
+            throw new RuntimeException("Loại pin không được để trống");
+        }
     }
 }
