@@ -51,6 +51,18 @@ public class TramService implements ITramService {
             throw new RuntimeException("vĩ độ vượt biên (>90)");
         }
 
+        if (tram.getSoLuongPinToiDa() == null) {
+            throw new RuntimeException("pin rỗng"); // Khớp với test [pin rỗng]
+        }
+        if (tram.getSoLuongPinToiDa() < 0) {
+            throw new RuntimeException("pin âm"); // Khớp với test [pin âm]
+        }
+
+        // 2. Kiểm tra số điện thoại
+        if (tram.getSoDT() == null || tram.getSoDT().trim().isEmpty()) {
+            throw new RuntimeException("số điện thoại rỗng"); // Khớp với test [số điện thoại rỗng]
+        }
+
         tram.setTenTram(tram.getTenTram().trim());
         return tramRepository.save(tram);
     }
