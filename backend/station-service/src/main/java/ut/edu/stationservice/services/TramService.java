@@ -22,7 +22,15 @@ public class TramService implements ITramService {
             throw new RuntimeException("Tên trạm rỗng");
         }
         if (tramRepository.existsByTenTram(tram.getTenTram().trim())) {
-            throw new RuntimeException("Tên trạm đã tồn tại!");
+            throw new RuntimeException("Tên trạm trùng");
+        }
+
+        if (tram.getTenTram().length() > 150) {
+            throw new RuntimeException("Tên trạm lố 150 kí tự");
+        }
+
+        if (tram.getDiaChi() == null || tram.getDiaChi().trim().isEmpty()) {
+            throw new RuntimeException("Địa chỉ rỗng");
         }
 
         tram.setTenTram(tram.getTenTram().trim());
