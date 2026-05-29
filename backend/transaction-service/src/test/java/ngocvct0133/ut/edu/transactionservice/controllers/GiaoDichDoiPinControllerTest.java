@@ -49,4 +49,24 @@ class GiaoDichDoiPinControllerTest {
 
         verifyNoInteractions(giaoDichDoiPinService);
     }
+
+    @Test
+    void createTransactionWithMissingAmountShouldReturn400() throws Exception {
+        mockMvc.perform(post("/api/transaction-service/giaodichdoipin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "maPinTra": "PIN-001",
+                                  "maPinNhan": "PIN-002",
+                                  "ngayGiaoDich": "2026-05-29T10:15:30",
+                                  "trangThaiGiaoDich": "Đã hoàn thành",
+                                  "phuongThucThanhToan": "cash",
+                                  "maTram": 1,
+                                  "maTaiXe": 2
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(giaoDichDoiPinService);
+    }
 }

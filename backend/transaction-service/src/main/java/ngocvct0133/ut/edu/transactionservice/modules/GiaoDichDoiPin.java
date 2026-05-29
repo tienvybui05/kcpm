@@ -23,7 +23,7 @@ public class GiaoDichDoiPin {
     @Pattern(regexp = "^(Đang xử lý|Đã hoàn thành)$", message = "trangThaiGiaoDich is invalid")
     private String trangThaiGiaoDich;
     @NotNull(message = "thanhtien is required")
-    private double thanhtien;
+    private Double thanhtien;
     @NotBlank(message = "phuongThucThanhToan is required")
     private String phuongThucThanhToan;
     @NotNull(message = "maTram is required")
@@ -34,7 +34,7 @@ public class GiaoDichDoiPin {
     public GiaoDichDoiPin() {
     }
 
-    public GiaoDichDoiPin(Long maGiaoDichDoiPin, String maPinTra, String maPinNhan, LocalDateTime ngayGiaoDich, String trangThaiGiaoDich, double thanhtien, String phuongThucThanhToan) {
+    public GiaoDichDoiPin(Long maGiaoDichDoiPin, String maPinTra, String maPinNhan, LocalDateTime ngayGiaoDich, String trangThaiGiaoDich, Double thanhtien, String phuongThucThanhToan) {
         this.maGiaoDichDoiPin = maGiaoDichDoiPin;
         this.maPinTra = maPinTra;
         this.maPinNhan = maPinNhan;
@@ -68,11 +68,11 @@ public class GiaoDichDoiPin {
         this.phuongThucThanhToan = phuongThucThanhToan;
     }
 
-    public double getThanhtien() {
+    public Double getThanhtien() {
         return thanhtien;
     }
 
-    public void setThanhtien(double thanhtien) {
+    public void setThanhtien(Double thanhtien) {
         this.thanhtien = thanhtien;
     }
 
