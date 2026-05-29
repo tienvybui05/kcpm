@@ -37,15 +37,21 @@ public class TaiXeService implements ITaiXeService{
         throw new RuntimeException("người dùng chưa cung cấp số điện thoại");
         }
 
-        // Kiểm tra email trùng
-        nguoiDungRepository.findByEmail(dto.getEmail()).ifPresent(u -> {
-            throw new RuntimeException("Email đã tồn tại!");
-        });
+        boolean phoneExists = nguoiDungRepository
+        .findBySoDienThoai(dto.getSoDienThoai())
+        .isPresent();
 
-        // Kiểm tra SĐT trùng
-        nguoiDungRepository.findBySoDienThoai(dto.getSoDienThoai()).ifPresent(u -> {
-            throw new RuntimeException("Số điện thoại đã tồn tại!");
-        });
+        boolean emailExists = nguoiDungRepository
+        .findByEmail(dto.getEmail())
+        .isPresent();
+
+        if (phoneExists) {
+        throw new RuntimeException("Số điện thoại đã tồn tại!");
+        }
+
+        if (emailExists) {
+            throw new RuntimeException("Email đã tồn tại!");
+        }
 
         NguoiDung nd = new NguoiDung();
         nd.setHoTen(dto.getHoTen());
