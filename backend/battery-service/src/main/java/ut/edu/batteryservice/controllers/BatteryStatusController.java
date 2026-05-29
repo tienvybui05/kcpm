@@ -18,6 +18,10 @@ public class BatteryStatusController {
     public ResponseEntity<BatteryStatusDTO> getBatteryStatusSummary(
             @RequestParam(required = false) Long tram
     ) {
+        if (tram != null && tram <= 0) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
         return ResponseEntity.ok(
                 batteryStatusService.getBatteryStatusSummary(tram)
         );
