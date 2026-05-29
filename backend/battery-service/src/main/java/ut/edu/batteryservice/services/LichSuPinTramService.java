@@ -30,6 +30,7 @@ public class LichSuPinTramService implements ILichSuPinTramService {
     @Transactional
     @Override
     public LichSuPinTram save(LichSuPinTram lichSuPinTram) {
+        validateLichSuPinTram(lichSuPinTram);
         return lichSuPinTramRepository.save(lichSuPinTram);
     }
 
@@ -62,6 +63,10 @@ public class LichSuPinTramService implements ILichSuPinTramService {
 
         if (lichSuPinTram.getHanhDong() == null || lichSuPinTram.getHanhDong().trim().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Hành động không được để trống");
+        }
+
+        if (lichSuPinTram.getMaPin() == null || lichSuPinTram.getMaPin() <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Mã pin phải lớn hơn 0");
         }
 
         if (lichSuPinTram.getMaTram() == null || lichSuPinTram.getMaTram() <= 0) {
