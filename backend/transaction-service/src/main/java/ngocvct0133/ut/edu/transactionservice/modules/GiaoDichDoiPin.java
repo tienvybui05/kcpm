@@ -25,6 +25,7 @@ public class GiaoDichDoiPin {
     @NotNull(message = "thanhtien is required")
     private Double thanhtien;
     @NotBlank(message = "phuongThucThanhToan is required")
+    @Pattern(regexp = "^(card|cash|package)$", message = "phuongThucThanhToan is invalid")
     private String phuongThucThanhToan;
     @NotNull(message = "maTram is required")
     private Long maTram;
