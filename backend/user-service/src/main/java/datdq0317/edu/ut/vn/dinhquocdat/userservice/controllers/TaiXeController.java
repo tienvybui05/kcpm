@@ -37,21 +37,38 @@ public class TaiXeController {
         return ResponseEntity.ok(taiXeService.danhSachTaiXe());
     }
 
+        // GET BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<TaiXe> layTaiXeTheoId(@PathVariable Long id) {
+    public ResponseEntity<?> layTaiXeTheoId(@PathVariable Long id) {
         TaiXe tx = taiXeService.layTaiXeTheoId(id);
-        if (tx == null) return ResponseEntity.notFound().build();
+
+        if (tx == null) {
+            return ResponseEntity.status(404).body(
+                Map.of("message", "Người dùng không tồn tại")
+            );
+        }
+
         return ResponseEntity.ok(tx);
     }
 
+   // GET BY USER ID
     @GetMapping("/user/{id}")
-    public ResponseEntity<TaiXe> layTaiXeTheoMaNguoiDung(@PathVariable Long id) {
+    public ResponseEntity<?> layTaiXeTheoMaNguoiDung(@PathVariable Long id) {
         try {
             TaiXe tx = taiXeService.layTaiXeTheoMaNguoiDung(id);
-            if (tx == null) return ResponseEntity.notFound().build();
+
+            if (tx == null) {
+                return ResponseEntity.status(404).body(
+                    Map.of("message", "Người dùng không tồn tại")
+                );
+            }
+
             return ResponseEntity.ok(tx);
+
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(500).body(
+                Map.of("message", "Lỗi hệ thống")
+            );
         }
     }
 
@@ -71,21 +88,35 @@ public class TaiXeController {
         return ResponseEntity.ok(response);
 
     } catch (RuntimeException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
-    }
+
+    Map<String, String> error = new HashMap<>();
+    error.put("message", e.getMessage());
+
+    return ResponseEntity.status(404).body(error);
+}
 }
 
    @DeleteMapping("/{id}")
 public ResponseEntity<?> xoaTaiXe(@PathVariable Long id) {
     try {
+
         boolean deleted = taiXeService.xoaTaiXe(id);
+
         if (deleted) {
-            return ResponseEntity.ok().body("Xóa tài xế thành công");
-        } else {
-            return ResponseEntity.badRequest().body("Không tìm thấy tài xế để xóa");
+            return ResponseEntity.ok(
+                Map.of("message", "Xóa tài xế thành công")
+            );
         }
+
+        return ResponseEntity.status(404).body(
+            Map.of("message", "Không tìm thấy tài xế!")
+        );
+
     } catch (Exception e) {
-        return ResponseEntity.badRequest().body("Lỗi khi xóa tài xế: " + e.getMessage());
+
+        return ResponseEntity.status(404).body(
+            Map.of("message", e.getMessage())
+        );
     }
 }
 @GetMapping("/info/{id}")

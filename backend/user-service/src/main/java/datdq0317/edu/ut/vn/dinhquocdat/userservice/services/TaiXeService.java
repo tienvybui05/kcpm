@@ -182,9 +182,13 @@ public class TaiXeService implements ITaiXeService{
     @Override
 public TaiXeResponse layThongTinTaiXe(Long id) {
     TaiXe tx = taiXeRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Không tìm thấy tài xế"));
+            .orElse(null);
 
-    NguoiDung nd = tx.getNguoiDung(); // ✅ Lấy thông tin người dùng
+    if (tx == null) {
+        return null;
+    }
+
+    NguoiDung nd = tx.getNguoiDung();
 
     TaiXeResponse res = new TaiXeResponse();
     res.setId(tx.getMaTaiXe());
@@ -193,7 +197,7 @@ public TaiXeResponse layThongTinTaiXe(Long id) {
     res.setSoDienThoai(nd.getSoDienThoai());
     res.setGioiTinh(nd.getGioiTinh());
     res.setNgaySinh(nd.getNgaySinh());
-    res.setBangLaiXe(tx.getBangLaiXe()); // thông tin riêng của tài xế
+    res.setBangLaiXe(tx.getBangLaiXe());
 
     return res;
 }
