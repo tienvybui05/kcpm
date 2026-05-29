@@ -32,6 +32,11 @@ public class TaiXeService implements ITaiXeService{
         if (dto.getEmail() == null || dto.getEmail().trim().isEmpty()) {
         throw new RuntimeException("Người dùng chưa cung cấp email");
         }
+         // VALIDATE SỐ ĐIỆN THOẠI
+        if (dto.getSoDienThoai() == null || dto.getSoDienThoai().trim().isEmpty()) {
+        throw new RuntimeException("người dùng chưa cung cấp số điện thoại");
+        }
+
         // Kiểm tra email trùng
         nguoiDungRepository.findByEmail(dto.getEmail()).ifPresent(u -> {
             throw new RuntimeException("Email đã tồn tại!");
