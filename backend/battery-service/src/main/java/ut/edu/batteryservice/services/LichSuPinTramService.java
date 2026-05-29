@@ -2,7 +2,9 @@ package ut.edu.batteryservice.services;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import ut.edu.batteryservice.models.LichSuPinTram;
 import ut.edu.batteryservice.models.Pin;
 import ut.edu.batteryservice.repositories.ILichSuPinTramRepository;
@@ -44,12 +46,26 @@ public class LichSuPinTramService implements ILichSuPinTramService {
     @Transactional
     @Override
     public LichSuPinTram addLichSuPinTram(LichSuPinTram lichSuPinTram) {
-        // có thể thêm logic kiểm tra trùng hoặc validate tại đây nếu cần
+        validateLichSuPinTram(lichSuPinTram);
         return lichSuPinTramRepository.save(lichSuPinTram);
     }
 
     @Override
     public List<Pin> getAvailablePins(Long maTram, String loaiPin) {
         return lichSuPinTramRepository.findAvailablePinsByTramAndLoai(maTram, loaiPin);
+    }
+
+    private void validateLichSuPinTram(LichSuPinTram lichSuPinTram) {
+        if (lichSuPinTram == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dữ liệu lịch sử pin trạm không được rỗng");
+        }
+
+        if (lichSuPinTram.getHanhDong() == null || lichSuPinTram.getHanhDong().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Hành động không được để trống");
+        }
+
+        if (lichSuPinTram.getMaTram() == null || lichSuPinTram.getMaTram() <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Mã trạm phải lớn hơn 0");
+        }
     }
 }
