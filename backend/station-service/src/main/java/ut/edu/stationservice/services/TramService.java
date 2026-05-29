@@ -34,7 +34,7 @@ public class TramService implements ITramService {
         }
 
         if (tram.getDiaChi().length() > 250) {
-            throw new RuntimeException("Tên trạm lố 250 kí tự");
+            throw new RuntimeException("Địa chỉ lố 250 kí tự");
         }
 
         if (tram.getKinhDo() == null) {
