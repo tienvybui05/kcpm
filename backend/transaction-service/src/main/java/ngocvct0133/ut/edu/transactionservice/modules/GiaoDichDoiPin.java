@@ -1,6 +1,8 @@
 package ngocvct0133.ut.edu.transactionservice.modules;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -10,13 +12,21 @@ public class GiaoDichDoiPin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long maGiaoDichDoiPin;
+    @NotBlank(message = "maPinTra is required")
     private String maPinTra;
+    @NotBlank(message = "maPinNhan is required")
     private String maPinNhan;
+    @NotNull(message = "ngayGiaoDich is required")
     private LocalDateTime ngayGiaoDich;
+    @NotBlank(message = "trangThaiGiaoDich is required")
     private String trangThaiGiaoDich;
+    @NotNull(message = "thanhtien is required")
     private double thanhtien;
+    @NotBlank(message = "phuongThucThanhToan is required")
     private String phuongThucThanhToan;
+    @NotNull(message = "maTram is required")
     private Long maTram;
+    @NotNull(message = "maTaiXe is required")
     private Long maTaiXe;
 
     public GiaoDichDoiPin() {

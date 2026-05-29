@@ -1,5 +1,6 @@
 package ngocvct0133.ut.edu.transactionservice.controllers;
 
+import jakarta.validation.Valid;
 import ngocvct0133.ut.edu.transactionservice.modules.GiaoDichDoiPin;
 import ngocvct0133.ut.edu.transactionservice.services.GiaoDichDoiPinService;
 import ngocvct0133.ut.edu.transactionservice.services.IGiaoDichDoiPinService;
@@ -33,7 +34,7 @@ public class GiaoDichDoiPinController {
 
     // Thêm giao dịch
     @PostMapping
-    public ResponseEntity<GiaoDichDoiPin> themGiaoDich(@RequestBody GiaoDichDoiPin doiPin) {
+    public ResponseEntity<GiaoDichDoiPin> themGiaoDich(@Valid @RequestBody GiaoDichDoiPin doiPin) {
         GiaoDichDoiPin saved = giaoDichDoiPinService.themGiaoDichDoiPin(doiPin);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
