@@ -90,19 +90,17 @@ public ResponseEntity<?> suaTaiXe(@PathVariable Long id,
     } catch (IllegalArgumentException e) {
 
         return ResponseEntity.status(400).body(
-            Map.of("message", e.getMessage())
+            Map.of("error", e.getMessage())
         );
 
     } catch (RuntimeException e) {
 
-        // Không tìm thấy tài xế
         if ("Không tìm thấy tài xế!".equals(e.getMessage())) {
             return ResponseEntity.status(404).body(
                 Map.of("message", e.getMessage())
             );
         }
 
-        // Email/SĐT đã tồn tại
         return ResponseEntity.status(409).body(
             Map.of("message", e.getMessage())
         );

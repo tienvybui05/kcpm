@@ -140,51 +140,68 @@ public class TaiXeService implements ITaiXeService{
 }
 
     @Override
-    public TaiXe suaTaiXe(Long id, TaiXeDTO dto) {
+public TaiXe suaTaiXe(Long id, TaiXeDTO dto) {
 
- if (dto.getEmail() == null ||
+    if (dto.getEmail() == null ||
         !dto.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
         throw new IllegalArgumentException("Email không đúng định dạng");
     }
 
-        return taiXeRepository.findById(id).map(tx -> {
-            tx.setBangLaiXe(dto.getBangLaiXe());
-            NguoiDung nd = tx.getNguoiDung();
-
-           if (!nd.getEmail().equals(dto.getEmail())) {
-    nguoiDungRepository.findByEmail(dto.getEmail()).ifPresent(existing -> {
-        if (!existing.getMaNguoiDung().equals(nd.getMaNguoiDung())) {
-            throw new RuntimeException("Email đã tồn tại");
-        }
-    });
-    nd.setEmail(dto.getEmail());
-}
-
-            if (!nd.getSoDienThoai().equals(dto.getSoDienThoai())) {
-                nguoiDungRepository.findBySoDienThoai(dto.getSoDienThoai()).ifPresent(existing -> {
-                    if (!existing.getMaNguoiDung().equals(nd.getMaNguoiDung())) {
-                        throw new RuntimeException("Số điện thoại đã được sử dụng bởi người dùng khác!");
-                    }
-                });
-                nd.setSoDienThoai(dto.getSoDienThoai());
-            }
-
-            // Cập nhật các field khác
-            nd.setHoTen(dto.getHoTen());
-            nd.setGioiTinh(dto.getGioiTinh());
-
-            // ENCODE MẬT KHẨU KHI SỬA (nếu có thay đổi mật khẩu)
-            if (dto.getMatKhau() != null && !dto.getMatKhau().isEmpty()) {
-                String encodedPassword = passwordEncoder.encode(dto.getMatKhau());
-                nd.setMatKhau(encodedPassword);
-            }
-
-            nd.setNgaySinh(dto.getNgaySinh());
-            nguoiDungRepository.save(nd);
-
-            return taiXeRepository.save(tx);
-        }).orElseThrow(() -> new RuntimeException("Không tìm thấy tài xế!"));
+    if (dto.getSoDienThoai() == null ||
+        !dto.getSoDienThoai().matches("^0\\d{9}$")) {
+        throw new IllegalArgumentException("Số điện thoại không hợp lệ");
     }
+
+    if (dto.getNgaySinh() == null) {
+        throw new IllegalArgumentException("Ngày sinh không hợp lệ");
+    }
+
+    if (dto.getNgaySinh().isAfter(LocalDate.now().minusYears(18))) {
+        throw new IllegalArgumentException("Tài xế phải từ 18 tuổi trở lên");
+    }
+
+    return taiXeRepository.findById(id).map(tx -> {
+
+        tx.setBangLaiXe(dto.getBangLaiXe());
+
+        NguoiDung nd = tx.getNguoiDung();
+
+        // CHECK EMAIL TRÙNG
+        if (!nd.getEmail().equals(dto.getEmail())) {
+            nguoiDungRepository.findByEmail(dto.getEmail()).ifPresent(existing -> {
+                if (!existing.getMaNguoiDung().equals(nd.getMaNguoiDung())) {
+                    throw new RuntimeException("Email đã tồn tại");
+                }
+            });
+            nd.setEmail(dto.getEmail());
+        }
+
+        // CHECK SĐT TRÙNG
+        if (!nd.getSoDienThoai().equals(dto.getSoDienThoai())) {
+            nguoiDungRepository.findBySoDienThoai(dto.getSoDienThoai()).ifPresent(existing -> {
+                if (!existing.getMaNguoiDung().equals(nd.getMaNguoiDung())) {
+                    throw new RuntimeException("Số điện thoại đã tồn tại");
+                }
+            });
+            nd.setSoDienThoai(dto.getSoDienThoai());
+        }
+
+        nd.setHoTen(dto.getHoTen());
+        nd.setGioiTinh(dto.getGioiTinh());
+
+        if (dto.getMatKhau() != null && !dto.getMatKhau().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(dto.getMatKhau());
+            nd.setMatKhau(encodedPassword);
+        }
+
+        nd.setNgaySinh(dto.getNgaySinh());
+
+        nguoiDungRepository.save(nd);
+
+        return taiXeRepository.save(tx);
+
+    }).orElseThrow(() -> new RuntimeException("Không tìm thấy tài xế!"));
+}
     @Override
 public TaiXeResponse layThongTinTaiXe(Long id) {
     TaiXe tx = taiXeRepository.findById(id)
