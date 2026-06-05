@@ -8,10 +8,14 @@ import java.util.List;
 
 @Repository
 public interface IPhuongTienRepository extends JpaRepository<PhuongTien, Long> {
+
     List<PhuongTien> findAllByMaTaiXe(Long maTaiXe);
-    boolean existsByVinOrBienSo(String vin, String bienSo);
 
-    // Bỏ qua bản ghi có id = maPhuongTien (dùng khi update)
-    boolean existsByVinOrBienSoAndMaPhuongTienNot(String vin, String bienSo, Long maPhuongTien);
+    boolean existsByVin(String vin);
+
+    boolean existsByBienSo(String bienSo);
+
+    boolean existsByVinAndMaPhuongTienNot(String vin, Long maPhuongTien);
+
+    boolean existsByBienSoAndMaPhuongTienNot(String bienSo, Long maPhuongTien);
 }
-
