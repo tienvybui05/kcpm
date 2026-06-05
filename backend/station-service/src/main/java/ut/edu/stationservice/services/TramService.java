@@ -1,6 +1,7 @@
 package ut.edu.stationservice.services;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -102,7 +103,7 @@ public class TramService implements ITramService {
                     existing.setTrangThai(tram.getTrangThai());
                     return tramRepository.save(existing);
                 })
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy trạm!"));
+                .orElseThrow(() -> new NoSuchElementException("Không tìm thấy trạm"));
     }
 
     @Override
