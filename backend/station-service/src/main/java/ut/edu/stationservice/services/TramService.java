@@ -63,6 +63,14 @@ public class TramService implements ITramService {
             throw new RuntimeException("số điện thoại rỗng"); // Khớp với test [số điện thoại rỗng]
         }
 
+        if (tram.getSoDT().trim().length() < 10) {
+            throw new RuntimeException("số điện thoại nhỏ hơn 10 số");
+        }
+
+        if(tram.getSoDT().trim().length() > 11){
+            throw new RuntimeException("số điện thoại lớn hơn 11 số");
+        }
+
         tram.setTenTram(tram.getTenTram().trim());
         return tramRepository.save(tram);
     }
