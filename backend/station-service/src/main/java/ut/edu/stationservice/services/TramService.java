@@ -63,12 +63,20 @@ public class TramService implements ITramService {
             throw new RuntimeException("số điện thoại rỗng"); // Khớp với test [số điện thoại rỗng]
         }
 
+        if (!tram.getSoDT().trim().matches("^[0-9]+$")) {
+            throw new RuntimeException("số điện thoại sai kiểu dữ liệu");
+        }
+
         if (tram.getSoDT().trim().length() < 10) {
             throw new RuntimeException("số điện thoại nhỏ hơn 10 số");
         }
 
         if(tram.getSoDT().trim().length() > 11){
             throw new RuntimeException("số điện thoại lớn hơn 11 số");
+        }
+
+        if (tram.getTrangThai() == null || tram.getTrangThai().trim().isEmpty()) {
+            throw new RuntimeException("trạng thái rỗng");
         }
 
         tram.setTenTram(tram.getTenTram().trim());
