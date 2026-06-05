@@ -103,6 +103,30 @@ public class TramService implements ITramService {
                         throw new RuntimeException("Tên trạm trùng");
                     }
 
+                    if (tram.getDiaChi() == null || tram.getDiaChi().trim().isEmpty()) {
+                        throw new RuntimeException("Địa chỉ rỗng"); // Khớp với Postman toLowerCase()
+                    }
+
+                    if (tram.getDiaChi().length() > 250) {
+                        throw new RuntimeException("địa chỉ lố 250 kí tự");
+                    }
+
+                    // 3. Validate Kinh độ
+                    if (tram.getKinhDo() == null) {
+                        throw new RuntimeException("kinh độ bị rỗng");
+                    }
+                    if (tram.getKinhDo() < -180 || tram.getKinhDo() > 180) {
+                        throw new RuntimeException("kinh độ vượt biên (>180)");
+                    }
+
+                    // 4. Validate Vĩ độ
+                    if (tram.getViDo() == null) {
+                        throw new RuntimeException("vĩ độ bị rỗng");
+                    }
+                    if (tram.getViDo() < -90 || tram.getViDo() > 90) {
+                        throw new RuntimeException("vĩ độ vượt biên (>90)");
+                    }
+
                     existing.setTenTram(tram.getTenTram());
                     existing.setDiaChi(tram.getDiaChi());
                     existing.setKinhDo(tram.getKinhDo());
