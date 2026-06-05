@@ -15,7 +15,7 @@ public class FcmTokenService implements IFcmTokenService {
     private IFcmTokenRepository repo;
 
     @Override
-    public void saveToken(Long maNguoiDung, String vaiTro, String token) {
+    public FcmToken saveToken(Long maNguoiDung, String vaiTro, String token) {
         Optional<FcmToken> existing = repo.findFirstByMaNguoiDung(maNguoiDung);
 
         if (existing.isPresent()) {
@@ -24,10 +24,11 @@ public class FcmTokenService implements IFcmTokenService {
             t.setToken(token);
             t.setUserRole(vaiTro);
             t.setCreatedAt(System.currentTimeMillis());
-            repo.save(t);
+            return repo.save(t);
         } else {
-            // 🆕 Nếu chưa có thì thêm mới
-            repo.save(new FcmToken(maNguoiDung, vaiTro, token));
+            // 🆕 Nếu chưa có thì thêm mới — chú ý thứ tự tham số: (maNguoiDung, token, userRole)
+            FcmToken created = new FcmToken(maNguoiDung, token, vaiTro);
+            return repo.save(created);
         }
     }
 

@@ -34,7 +34,12 @@
 
         @GetMapping("/{id}")
         public ResponseEntity<BaoCao> layBaoCao(@PathVariable Long id) {
-            return ResponseEntity.ok(baoCaoService.layBaoCao(id));
+            try {
+                BaoCao bc = baoCaoService.layBaoCao(id);
+                return ResponseEntity.ok(bc);
+            } catch (RuntimeException e) {
+                return ResponseEntity.notFound().build();
+            }
         }
 
         @PostMapping

@@ -45,6 +45,7 @@ public class BaoCao {
 
     // 🧩 Getter & Setter
     public Long getMaBaoCao() { return maBaoCao; }
+    public void setMaBaoCao(Long maBaoCao) { this.maBaoCao = maBaoCao; }
     public String getTieuDe() { return tieuDe; }
     public void setTieuDe(String tieuDe) { this.tieuDe = tieuDe; }
     public String getNoiDung() { return noiDung; }
