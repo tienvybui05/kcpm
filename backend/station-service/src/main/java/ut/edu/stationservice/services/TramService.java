@@ -127,6 +127,32 @@ public class TramService implements ITramService {
                         throw new RuntimeException("vĩ độ vượt biên (>90)");
                     }
 
+                    if (tram.getSoLuongPinToiDa() == null) {
+                        throw new RuntimeException("pin rỗng");
+                    }
+                    if (tram.getSoLuongPinToiDa() < 0) {
+                        throw new RuntimeException("pin âm");
+                    }
+
+                    // 6. Validate Số điện thoại (Phòng hờ test case tiếp theo)
+                    if (tram.getSoDT() == null || tram.getSoDT().trim().isEmpty()) {
+                        throw new RuntimeException("số điện thoại rỗng");
+                    }
+                    if (!tram.getSoDT().trim().matches("^[0-9]+$")) {
+                        throw new RuntimeException("số điện thoại sai kiểu dữ liệu");
+                    }
+                    if (tram.getSoDT().trim().length() < 10) {
+                        throw new RuntimeException("số điện thoại nhỏ hơn 10 số");
+                    }
+                    if (tram.getSoDT().trim().length() > 11) {
+                        throw new RuntimeException("số điện thoại lớn hơn 11 số");
+                    }
+
+                    // 7. Validate Trạng thái (Phòng hờ test case tiếp theo)
+                    if (tram.getTrangThai() == null || tram.getTrangThai().trim().isEmpty()) {
+                        throw new RuntimeException("trạng thái rỗng");
+                    }
+
                     existing.setTenTram(tram.getTenTram());
                     existing.setDiaChi(tram.getDiaChi());
                     existing.setKinhDo(tram.getKinhDo());
