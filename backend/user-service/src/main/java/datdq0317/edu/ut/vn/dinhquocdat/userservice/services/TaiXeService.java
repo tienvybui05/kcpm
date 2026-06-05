@@ -141,18 +141,24 @@ public class TaiXeService implements ITaiXeService{
 
     @Override
     public TaiXe suaTaiXe(Long id, TaiXeDTO dto) {
+
+ if (dto.getEmail() == null ||
+        !dto.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+        throw new IllegalArgumentException("Email không đúng định dạng");
+    }
+
         return taiXeRepository.findById(id).map(tx -> {
             tx.setBangLaiXe(dto.getBangLaiXe());
             NguoiDung nd = tx.getNguoiDung();
 
-            if (!nd.getEmail().equals(dto.getEmail())) {
-                nguoiDungRepository.findByEmail(dto.getEmail()).ifPresent(existing -> {
-                    if (!existing.getMaNguoiDung().equals(nd.getMaNguoiDung())) {
-                        throw new RuntimeException("Email đã được sử dụng bởi người dùng khác!");
-                    }
-                });
-                nd.setEmail(dto.getEmail());
-            }
+           if (!nd.getEmail().equals(dto.getEmail())) {
+    nguoiDungRepository.findByEmail(dto.getEmail()).ifPresent(existing -> {
+        if (!existing.getMaNguoiDung().equals(nd.getMaNguoiDung())) {
+            throw new RuntimeException("Email đã tồn tại");
+        }
+    });
+    nd.setEmail(dto.getEmail());
+}
 
             if (!nd.getSoDienThoai().equals(dto.getSoDienThoai())) {
                 nguoiDungRepository.findBySoDienThoai(dto.getSoDienThoai()).ifPresent(existing -> {

@@ -72,28 +72,41 @@ public class TaiXeController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> suaTaiXe(@PathVariable Long id, @RequestBody TaiXeDTO dto) {
+   @PutMapping("/{id}")
+public ResponseEntity<?> suaTaiXe(@PathVariable Long id,
+                                  @RequestBody TaiXeDTO dto) {
     try {
+
         TaiXe updated = taiXeService.suaTaiXe(id, dto);
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Cập nhật thông tin tài xế thành công");
-
-        // giữ structure cũ
         response.put("maTaiXe", updated.getMaTaiXe());
         response.put("bangLaiXe", updated.getBangLaiXe());
         response.put("nguoiDung", updated.getNguoiDung());
 
         return ResponseEntity.ok(response);
 
+    } catch (IllegalArgumentException e) {
+
+        return ResponseEntity.status(400).body(
+            Map.of("message", e.getMessage())
+        );
+
     } catch (RuntimeException e) {
 
-    Map<String, String> error = new HashMap<>();
-    error.put("message", e.getMessage());
+        // Không tìm thấy tài xế
+        if ("Không tìm thấy tài xế!".equals(e.getMessage())) {
+            return ResponseEntity.status(404).body(
+                Map.of("message", e.getMessage())
+            );
+        }
 
-    return ResponseEntity.status(404).body(error);
-}
+        // Email/SĐT đã tồn tại
+        return ResponseEntity.status(409).body(
+            Map.of("message", e.getMessage())
+        );
+    }
 }
 
    @DeleteMapping("/{id}")
