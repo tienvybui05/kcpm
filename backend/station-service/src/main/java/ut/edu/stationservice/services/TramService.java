@@ -89,9 +89,18 @@ public class TramService implements ITramService {
     public Tram updatePin(Tram tram) {
         return tramRepository.findById(tram.getMaTram())
                 .map(existing -> {
-                    if (!existing.getTenTram().equals(tram.getTenTram())
-                            && tramRepository.existsByTenTram(tram.getTenTram())) {
-                        throw new RuntimeException("Tên trạm đã được sử dụng!");
+                    if (tram.getTenTram() == null || tram.getTenTram().trim().isEmpty()) {
+                        throw new RuntimeException("Tên trạm rỗng"); // Khớp chính xác với test Postman
+                    }
+
+                    if (tram.getTenTram().length() > 150) {
+                        throw new RuntimeException("Tên trạm lố 150 kí tự");
+                    }
+
+                    // Lưu ý: Cần thêm trim() vào đây để kiểm tra trùng lặp chính xác hơn nếu có khoảng trắng
+                    if (!existing.getTenTram().equals(tram.getTenTram().trim())
+                            && tramRepository.existsByTenTram(tram.getTenTram().trim())) {
+                        throw new RuntimeException("Tên trạm trùng");
                     }
 
                     existing.setTenTram(tram.getTenTram());
