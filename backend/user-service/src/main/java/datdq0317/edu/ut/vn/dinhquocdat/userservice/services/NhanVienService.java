@@ -119,49 +119,59 @@ public class NhanVienService implements INhanVienService {
         }
     }
 
+   
     @Transactional
-    @Override
-    public NhanVien suaNhanVien(Long id, NhanVienDTO dto) {
-        return nhanVienRepository.findById(id).map(nv -> {
-            nv.setBangCap(dto.getBangCap());
-            nv.setKinhNghiem(dto.getKinhNghiem());
-            nv.setMaTram(dto.getMaTram()); // Cập nhật mã trạm
+@Override
+public NhanVien suaNhanVien(Long id, NhanVienDTO dto) {
 
-            NguoiDung nd = nv.getNguoiDung();
+    // CHECK TỒN TẠI TRƯỚC
+    NhanVien nv = nhanVienRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên"));
 
-            // Kiểm tra email trùng
-            if (!nd.getEmail().equals(dto.getEmail())) {
-                nguoiDungRepository.findByEmail(dto.getEmail()).ifPresent(existing -> {
-                    if (!existing.getMaNguoiDung().equals(nd.getMaNguoiDung())) {
-                        throw new RuntimeException("Email đã được sử dụng bởi người khác!");
-                    }
-                });
-                nd.setEmail(dto.getEmail());
-            }
-
-            // Kiểm tra số điện thoại trùng
-            if (!nd.getSoDienThoai().equals(dto.getSoDienThoai())) {
-                nguoiDungRepository.findBySoDienThoai(dto.getSoDienThoai()).ifPresent(existing -> {
-                    if (!existing.getMaNguoiDung().equals(nd.getMaNguoiDung())) {
-                        throw new RuntimeException("Số điện thoại đã được sử dụng bởi người khác!");
-                    }
-                });
-                nd.setSoDienThoai(dto.getSoDienThoai());
-            }
-
-            // Cập nhật thông tin cơ bản
-            nd.setHoTen(dto.getHoTen());
-            nd.setGioiTinh(dto.getGioiTinh());
-            nd.setNgaySinh(dto.getNgaySinh());
-
-            // Chỉ cập nhật mật khẩu nếu được cung cấp mật khẩu mới
-            if (dto.getMatKhau() != null && !dto.getMatKhau().trim().isEmpty()) {
-                String encodedPassword = passwordEncoder.encode(dto.getMatKhau());
-                nd.setMatKhau(encodedPassword);
-            }
-
-            nguoiDungRepository.save(nd);
-            return nhanVienRepository.save(nv);
-        }).orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên!"));
+    // VALIDATE SAU
+    if (dto.getNgaySinh() == null) {
+        throw new IllegalArgumentException("Ngày sinh không hợp lệ");
     }
+
+    nv.setBangCap(dto.getBangCap());
+    nv.setKinhNghiem(dto.getKinhNghiem());
+    nv.setMaTram(dto.getMaTram());
+
+    nv.setBangCap(dto.getBangCap());
+    nv.setKinhNghiem(dto.getKinhNghiem());
+    nv.setMaTram(dto.getMaTram());
+
+    NguoiDung nd = nv.getNguoiDung();
+
+    if (!nd.getEmail().equals(dto.getEmail())) {
+        nguoiDungRepository.findByEmail(dto.getEmail()).ifPresent(existing -> {
+            if (!existing.getMaNguoiDung().equals(nd.getMaNguoiDung())) {
+                throw new RuntimeException("Email đã được sử dụng bởi người khác!");
+            }
+        });
+        nd.setEmail(dto.getEmail());
+    }
+
+    if (!nd.getSoDienThoai().equals(dto.getSoDienThoai())) {
+        nguoiDungRepository.findBySoDienThoai(dto.getSoDienThoai()).ifPresent(existing -> {
+            if (!existing.getMaNguoiDung().equals(nd.getMaNguoiDung())) {
+                throw new RuntimeException("Số điện thoại đã được sử dụng bởi người khác!");
+            }
+        });
+        nd.setSoDienThoai(dto.getSoDienThoai());
+    }
+
+    nd.setHoTen(dto.getHoTen());
+    nd.setGioiTinh(dto.getGioiTinh());
+    nd.setNgaySinh(dto.getNgaySinh());
+
+    if (dto.getMatKhau() != null && !dto.getMatKhau().trim().isEmpty()) {
+        String encodedPassword = passwordEncoder.encode(dto.getMatKhau());
+        nd.setMatKhau(encodedPassword);
+    }
+
+    nguoiDungRepository.save(nd);
+
+    return nhanVienRepository.save(nv);
+}
 }
