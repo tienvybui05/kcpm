@@ -1,8 +1,10 @@
     package ngocvct0133.ut.edu.feedbackservice.controllers;
 
     import java.util.List;
-    import java.util.Map;
 
+    import jakarta.validation.Valid;
+    import ngocvct0133.ut.edu.feedbackservice.dtos.CreateBaoCaoRequest;
+    import ngocvct0133.ut.edu.feedbackservice.dtos.UpdateBaoCaoPhanHoiRequest;
     import org.springframework.http.HttpStatus;
     import org.springframework.http.ResponseEntity;
     import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,7 +45,15 @@
         }
 
         @PostMapping
-        public ResponseEntity<BaoCao> themBaoCao(@RequestBody BaoCao baoCao) {
+        public ResponseEntity<BaoCao> themBaoCao(@Valid @RequestBody CreateBaoCaoRequest request) {
+            BaoCao baoCao = new BaoCao();
+            baoCao.setTieuDe(request.getTieuDe());
+            baoCao.setNoiDung(request.getNoiDung());
+            baoCao.setLoaiPhanHoi(request.getLoaiPhanHoi());
+            baoCao.setMaTaiXe(request.getMaTaiXe());
+            baoCao.setDestinationType(request.getDestinationType());
+            baoCao.setMaTram(request.getMaTram());
+            baoCao.setPhanHoi(request.getPhanHoi());
             BaoCao saved = baoCaoService.themBaoCao(baoCao);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         }
@@ -61,8 +71,8 @@
 
         // 📨 Admin phản hồi
         @PutMapping("/{id}/phanhoi")
-        public ResponseEntity<BaoCao> phanHoiBaoCao(@PathVariable Long id, @RequestBody Map<String, String> body) {
-            String phanHoi = body.get("phanHoi");
+        public ResponseEntity<BaoCao> phanHoiBaoCao(@PathVariable Long id, @Valid @RequestBody UpdateBaoCaoPhanHoiRequest body) {
+            String phanHoi = body.getPhanHoi();
             BaoCao updated = baoCaoService.phanHoiBaoCao(id, phanHoi);
             return ResponseEntity.ok(updated);
         }
