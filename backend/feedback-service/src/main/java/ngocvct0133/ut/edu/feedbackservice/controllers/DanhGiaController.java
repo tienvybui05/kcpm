@@ -2,6 +2,8 @@ package ngocvct0133.ut.edu.feedbackservice.controllers;
 
 import ngocvct0133.ut.edu.feedbackservice.modules.DanhGia;
 import ngocvct0133.ut.edu.feedbackservice.services.IDanhGiaService;
+import jakarta.validation.Valid;
+import ngocvct0133.ut.edu.feedbackservice.dtos.CreateDanhGiaRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,13 @@ public class DanhGiaController {
     }
 
     @PostMapping
-    public ResponseEntity<DanhGia> themDanhGia(@RequestBody DanhGia danhGia) {
+    public ResponseEntity<DanhGia> themDanhGia(@Valid @RequestBody CreateDanhGiaRequest request) {
+        DanhGia danhGia = new DanhGia();
+        danhGia.setNoiDung(request.getNoiDung());
+        danhGia.setSoSao(request.getSoSao());
+        danhGia.setNgayDanhGia(request.getNgayDanhGia());
+        danhGia.setMaLichDat(request.getMaLichDat());
+        danhGia.setMaTram(request.getMaTram());
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 danhGiaService.themDanhGia(danhGia)
         );
