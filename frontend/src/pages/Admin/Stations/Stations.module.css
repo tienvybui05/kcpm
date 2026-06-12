@@ -268,41 +268,45 @@
   background-color: #f3f4f6;
 }
 
-
 /* ========== MODAL (Popup thêm trạm) ========== */
 .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.35);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999; /* cao hơn BatteryGrid */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4); /* Nền tối mờ hơn một chút */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
 }
 
 .modalContent {
   background: #fff;
-  width: 500px;
-  border-radius: 14px;
-  padding: 24px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  width: 650px; /* Rộng hơn để chia 2 cột đẹp hơn */
+  max-width: 90%;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   animation: fadeIn 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Phần Header có viền dưới */
 .modalHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 18px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f3f4f6;
 }
 
 .modalHeader h3 {
   font-size: 18px;
   font-weight: 700;
   color: #111827;
+  margin: 0;
 }
 
 .closeBtn {
@@ -311,86 +315,110 @@
   cursor: pointer;
   color: #6b7280;
   font-size: 18px;
+  padding: 4px;
+  transition: color 0.2s;
 }
 
-.modalForm {
+.closeBtn:hover {
+  color: #111827;
+}
+
+/* Phần Body chứa Form */
+.modalBody {
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 20px;
+}
+
+.gridRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Chia 2 cột đều nhau */
+  gap: 20px;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 
 .formGroup label {
   font-size: 14px;
+  font-weight: 600;
   color: #374151;
-  margin-bottom: 6px;
 }
 
 .formGroup input,
 .formGroup select {
-  padding: 10px;
+  padding: 10px 14px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   font-size: 14px;
+  color: #111827;
   outline: none;
+  transition: border-color 0.2s;
+}
+
+.formGroup input::placeholder {
+  color: #9ca3af;
 }
 
 .formGroup input:focus,
 .formGroup select:focus {
   border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.gridRow {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
+/* Phần Footer chứa Nút bấm có viền trên */
 .modalActions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 12px;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #f3f4f6;
+  background-color: #fff;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 
 .cancelBtn {
-  background: #f3f4f6;
-  border: none;
-  padding: 8px 14px;
+  background: #f9fafb;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+  padding: 10px 24px;
   border-radius: 8px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
 }
 
 .cancelBtn:hover {
-  background: #e5e7eb;
+  background: #f3f4f6;
 }
 
 .submitBtn {
   background: #111827;
   color: #fff;
   border: none;
-  padding: 8px 16px;
+  padding: 10px 24px;
   border-radius: 8px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: background 0.2s ease;
 }
 
 .submitBtn:hover {
   background: #1f2937;
 }
 .modalContentLarge {
-    background: #fff;
-    width: 90%;
-    max-width: 1200px;
-    height: 80vh;
-    overflow-y: auto;
-    border-radius: 14px;
-    padding: 24px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 0.3s ease;
+  background: #fff;
+  width: 90%;
+  max-width: 1200px;
+  height: 80vh;
+  overflow-y: auto;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease;
 }
