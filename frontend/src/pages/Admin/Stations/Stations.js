@@ -70,7 +70,19 @@ export default function Stations() {
   // Modal BatteryGrid
   const [showBatteryGrid, setShowBatteryGrid] = useState(false);
   const [selectedStationId, setSelectedStationId] = useState(null);
+  const validatePhone = (phone) => {
+    if (!phone) return "❌ Số điện thoại không được để trống.";
 
+    if (/[a-zA-Z]/.test(phone)) return "❌ Số điện thoại chứa chữ cái.";
+
+    if (/[^0-9]/.test(phone)) return "❌ Số điện thoại chứa ký tự đặc biệt.";
+
+    if (phone.length < 10) return "❌ Số điện thoại nhỏ hơn 10 ký tự.";
+
+    if (phone.length > 11) return "❌ Số điện thoại lớn hơn 11 ký tự.";
+
+    return null;
+  };
   // Gọi API danh sách trạm
   useEffect(() => {
     const fetchStations = async () => {
@@ -127,12 +139,24 @@ export default function Stations() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // CHỈ validate max length ở frontend
+    // =========================
+    // FRONTEND VALIDATION BASIC
+    // =========================
+
     if (formData.diaChi.length > 250) {
       alert("❌ Địa chỉ lố 250 kí tự.");
       return;
     }
 
+    if (formData.tenTram.length > 150) {
+      alert("❌ Tên trạm lố 150 kí tự.");
+      return;
+    }
+    const phoneError = validatePhone(formData.soDT);
+    if (phoneError) {
+      alert(phoneError);
+      return;
+    }
     try {
       if (modalMode === "add") {
         const res = await axios.post("/api/station-service/tram", formData);
@@ -156,11 +180,8 @@ export default function Stations() {
 
       setShowModal(false);
     } catch (err) {
-      console.error("❌ Lỗi khi lưu dữ liệu:", err);
+      let message = err?.response?.data?.message;
 
-      const message = err?.response?.data?.message;
-
-      // QUAN TRỌNG: backend trả message gì thì show đúng y chang
       if (message) {
         alert(`❌ ${message}`);
       } else {
