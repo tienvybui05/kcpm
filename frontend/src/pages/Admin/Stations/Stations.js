@@ -1,4 +1,4 @@
- import axios from "axios";
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -126,9 +126,17 @@ export default function Stations() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // CHỈ validate max length ở frontend
+    if (formData.diaChi.length > 250) {
+      alert("❌ Địa chỉ lố 250 kí tự.");
+      return;
+    }
+
     try {
       if (modalMode === "add") {
         const res = await axios.post("/api/station-service/tram", formData);
+
         setStations((prev) => [...prev, res.data]);
         alert("✅ Thêm trạm thành công!");
       } else if (modalMode === "edit") {
@@ -136,17 +144,28 @@ export default function Stations() {
           `/api/station-service/tram/${selectedStation.maTram}`,
           formData,
         );
+
         setStations((prev) =>
           prev.map((st) =>
             st.maTram === selectedStation.maTram ? res.data : st,
           ),
         );
+
         alert("✅ Cập nhật trạm thành công!");
       }
+
       setShowModal(false);
     } catch (err) {
       console.error("❌ Lỗi khi lưu dữ liệu:", err);
-      alert("❌ Không thể lưu dữ liệu.");
+
+      const message = err?.response?.data?.message;
+
+      // QUAN TRỌNG: backend trả message gì thì show đúng y chang
+      if (message) {
+        alert(`❌ ${message}`);
+      } else {
+        alert("❌ Không thể lưu dữ liệu.");
+      }
     }
   };
 
