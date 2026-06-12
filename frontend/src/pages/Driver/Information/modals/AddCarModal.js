@@ -3,12 +3,19 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../../../../components/Shares/Button/Button";
 import styles from "../CarManagement.module.css";
-import { faCarSide, faBatteryFull, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCarSide,
+  faBatteryFull,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 
-function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) { // Nhận maTaiXe từ props
+function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) {
   const [loadingModels, setLoadingModels] = useState(false);
   const [uniqueModels, setUniqueModels] = useState([]);
   const [creatingPin, setCreatingPin] = useState(false);
+
+  // 1. Thêm state để quản lý lỗi hiển thị trên UI
+  const [errors, setErrors] = useState({});
 
   const [newCar, setNewCar] = useState({
     vin: "",
@@ -31,8 +38,7 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) { // Nhận maTaiX
 
       if (pinsRes.ok) {
         const pinsData = await pinsRes.json();
-        
-        // Lọc model duy nhất từ dữ liệu server
+
         const uniqModels = [];
         const seen = new Set();
         pinsData.forEach((p) => {
@@ -58,7 +64,6 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) { // Nhận maTaiX
     }
   };
 
-  // Hàm xử lý khi chọn loại pin
   const handlePinTypeChange = (selectedType) => {
     if (selectedType) {
       const found = uniqueModels.find((m) => m.loaiPin === selectedType);
@@ -87,7 +92,6 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) { // Nhận maTaiX
     }
   };
 
-  // Tạo pin mới cho xe
   const createNewPinForCar = async (token, carInfo) => {
     const pinPayload = {
       loaiPin: carInfo.loaiPin,
@@ -118,10 +122,23 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) { // Nhận maTaiX
 
   const handleSaveNew = async () => {
     const token = localStorage.getItem("token");
-    
+
     if (!maTaiXe) {
       alert("Không tìm thấy thông tin tài xế!");
       return;
+    }
+
+    // Kiểm tra trước khi submit
+    let hasError = false;
+    let newErrors = {};
+
+    if (!newCar.loaiXe.trim()) {
+      newErrors.loaiXe = "Không được loại xe để trống";
+      hasError = true;
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
     }
 
     if (!newCar.vin.trim() || !newCar.bienSo.trim() || !newCar.loaiXe.trim()) {
@@ -134,23 +151,27 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) { // Nhận maTaiX
       return;
     }
 
-    if (!newCar.sucKhoePin || newCar.sucKhoePin < 0 || newCar.sucKhoePin > 100) {
+    if (
+      !newCar.sucKhoePin ||
+      newCar.sucKhoePin < 0 ||
+      newCar.sucKhoePin > 100
+    ) {
       alert("Vui lòng nhập sức khỏe pin từ 0-100%!");
       return;
     }
 
+    if (hasError) return;
+
     setCreatingPin(true);
 
     try {
-      // 1. Tạo pin mới trước
       const newPin = await createNewPinForCar(token, newCar);
 
-      // 2. Tạo xe với mã tài xế và mã pin vừa tạo
       const carPayload = {
         vin: newCar.vin.trim(),
         bienSo: newCar.bienSo.trim(),
         loaiXe: newCar.loaiXe.trim(),
-        maTaiXe: maTaiXe, // Sử dụng mã tài xế thay vì userId
+        maTaiXe: maTaiXe,
         maPin: newPin.maPin,
       };
 
@@ -169,7 +190,6 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) { // Nhận maTaiX
         onSuccess();
       } else {
         const error = await carResponse.text();
-        // Nếu tạo xe thất bại, xóa pin vừa tạo
         await fetch(`/api/battery-service/pins/${newPin.maPin}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
@@ -184,7 +204,7 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) { // Nhận maTaiX
     }
   };
 
-  // Reset form khi mở modal
+  // Reset form và errors khi mở modal
   useEffect(() => {
     if (isOpen) {
       setNewCar({
@@ -196,9 +216,19 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) { // Nhận maTaiX
         dungLuongPin: "",
         sucKhoePin: "100",
       });
+      setErrors({}); // 2. Xóa thông báo lỗi cũ khi mở lại popup
       loadUniqueModels();
     }
   }, [isOpen]);
+
+  // 3. Hàm xử lý khi blur (tab ra khỏi ô input)
+  const handleBlurLoaiXe = () => {
+    if (!newCar.loaiXe.trim()) {
+      setErrors((prev) => ({ ...prev, loaiXe: "Không được loại xe để trống" }));
+    } else {
+      setErrors((prev) => ({ ...prev, loaiXe: "" }));
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -206,7 +236,10 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) { // Nhận maTaiX
     <div className={styles.modalOverlay}>
       <div className={styles.modal}>
         <h2>
-          <FontAwesomeIcon icon={faCarSide} style={{ marginRight: "10px", color: "#007bff" }} />
+          <FontAwesomeIcon
+            icon={faCarSide}
+            style={{ marginRight: "10px", color: "#007bff" }}
+          />
           Thêm Xe Mới & Tạo Pin
         </h2>
 
@@ -239,14 +272,37 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) { // Nhận maTaiX
             id="loaiXe"
             type="text"
             value={newCar.loaiXe}
-            onChange={(e) => setNewCar({ ...newCar, loaiXe: e.target.value })}
+            onChange={(e) => {
+              setNewCar({ ...newCar, loaiXe: e.target.value });
+              // Xóa lỗi khi người dùng bắt đầu gõ lại
+              if (errors.loaiXe) {
+                setErrors((prev) => ({ ...prev, loaiXe: "" }));
+              }
+            }}
+            onBlur={handleBlurLoaiXe} // 4. Gắn sự kiện onBlur để check testcase Tab
             placeholder="VD: VinFast VF8"
           />
+          {/* 5. Thẻ hiển thị lỗi chữ đỏ kì vọng của CodeceptJS */}
+          {errors.loaiXe && (
+            <span
+              style={{
+                color: "red",
+                fontSize: "12px",
+                marginTop: "4px",
+                display: "block",
+              }}
+            >
+              {errors.loaiXe}
+            </span>
+          )}
         </div>
 
         <div className={styles.sectionDivider}>
           <h4>
-            <FontAwesomeIcon icon={faBatteryFull} style={{ marginRight: "8px", color: "#28a745" }} />
+            <FontAwesomeIcon
+              icon={faBatteryFull}
+              style={{ marginRight: "8px", color: "#28a745" }}
+            />
             Thông tin Pin
           </h4>
         </div>
@@ -276,8 +332,18 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) { // Nhận maTaiX
             value={newCar.loaiPin}
             onChange={(e) => setNewCar({ ...newCar, loaiPin: e.target.value })}
             placeholder="Loại pin sẽ tự động điền khi chọn model"
-            className={newCar.selectedPinType && uniqueModels.find(m => m.loaiPin === newCar.selectedPinType) ? styles.readonlyInput : ""}
-            readOnly={!!(newCar.selectedPinType && uniqueModels.find(m => m.loaiPin === newCar.selectedPinType))}
+            className={
+              newCar.selectedPinType &&
+              uniqueModels.find((m) => m.loaiPin === newCar.selectedPinType)
+                ? styles.readonlyInput
+                : ""
+            }
+            readOnly={
+              !!(
+                newCar.selectedPinType &&
+                uniqueModels.find((m) => m.loaiPin === newCar.selectedPinType)
+              )
+            }
           />
         </div>
 
@@ -287,10 +353,22 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) { // Nhận maTaiX
             id="dungLuongPin"
             type="number"
             value={newCar.dungLuongPin}
-            onChange={(e) => setNewCar({ ...newCar, dungLuongPin: e.target.value })}
+            onChange={(e) =>
+              setNewCar({ ...newCar, dungLuongPin: e.target.value })
+            }
             placeholder="Dung lượng sẽ tự động điền khi chọn model"
-            className={newCar.selectedPinType && uniqueModels.find(m => m.loaiPin === newCar.selectedPinType) ? styles.readonlyInput : ""}
-            readOnly={!!(newCar.selectedPinType && uniqueModels.find(m => m.loaiPin === newCar.selectedPinType))}
+            className={
+              newCar.selectedPinType &&
+              uniqueModels.find((m) => m.loaiPin === newCar.selectedPinType)
+                ? styles.readonlyInput
+                : ""
+            }
+            readOnly={
+              !!(
+                newCar.selectedPinType &&
+                uniqueModels.find((m) => m.loaiPin === newCar.selectedPinType)
+              )
+            }
           />
         </div>
 
@@ -303,7 +381,9 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) { // Nhận maTaiX
             max="100"
             step="1"
             value={newCar.sucKhoePin}
-            onChange={(e) => setNewCar({ ...newCar, sucKhoePin: e.target.value })}
+            onChange={(e) =>
+              setNewCar({ ...newCar, sucKhoePin: e.target.value })
+            }
             placeholder="Nhập từ 0-100%"
           />
           <div className={styles.rangeInfo}>
@@ -323,12 +403,7 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) { // Nhận maTaiX
             <FontAwesomeIcon icon={faPlus} style={{ marginRight: "8px" }} />
             {creatingPin ? "Đang tạo..." : "Tạo Xe & Pin"}
           </Button>
-          <Button
-            white
-            blackoutline
-            type="button"
-            onClick={onClose}
-          >
+          <Button white blackoutline type="button" onClick={onClose}>
             Hủy
           </Button>
         </div>
