@@ -10,13 +10,17 @@ Before(async ({ I }) => {
     await loginOnce(I);
 });
 
-Scenario("VIN rỗng", async ({ I }) => {
+Scenario("Mã VIN để rỗng - Kiểm tra chữ thông báo lỗi hiển thị của ô nhập VIN", async ({ I }) => {
     await openAddVehicleModal(I);
+    fillNominalVehicleForm(I, { vin: true }); // Không tự động điền mã VIN
 
-    fillNominalVehicleForm(I);
+    I.click("#vin");
+    I.pressKey(['Control', 'a']);
+    I.pressKey('Backspace');
 
-    I.fillField("#vin", "");
+    I.pressKey("Tab");
+    I.wait(1);
 
-    // KÌ VỌNG: Nút "Tạo Xe & Pin" phải bị khóa (disabled) khi số VIN trống
-    I.seeElement('//button[contains(., "Tạo Xe & Pin") and @disabled]');
+    // KÌ VỌNG: Kiểm tra chữ cảnh báo lỗi xuất hiện trên UI
+    I.see("Không được để mã VIN trống");
 });

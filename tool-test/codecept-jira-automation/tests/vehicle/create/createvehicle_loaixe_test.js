@@ -10,13 +10,17 @@ Before(async ({ I }) => {
     await loginOnce(I);
 });
 
-Scenario("Loại xe rỗng", async ({ I }) => {
+Scenario("Loại xe để rỗng - Kiểm tra chữ thông báo lỗi của ô nhập loại xe", async ({ I }) => {
     await openAddVehicleModal(I);
+    fillNominalVehicleForm(I, { loaiXe: true }); // Không tự động điền loại xe
 
-    fillNominalVehicleForm(I);
+    I.click("#loaiXe");
+    I.pressKey(['Control', 'a']);
+    I.pressKey('Backspace');
 
-    I.fillField("#loaiXe", "");
+    I.pressKey("Tab"); // Rời ô để kích hoạt validation chữ đỏ
+    I.wait(1);
 
-    // KÌ VỌNG: Nút "Tạo Xe & Pin" phải bị khóa (disabled) khi loại xe trống
-    I.seeElement('//button[contains(., "Tạo Xe & Pin") and @disabled]');
+    // KÌ VỌNG: Kiểm tra chữ cảnh báo lỗi xuất hiện trên UI
+    I.see("Không được loại xe để trống");
 });
