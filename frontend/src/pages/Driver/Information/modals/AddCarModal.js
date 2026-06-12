@@ -14,7 +14,7 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) {
   const [uniqueModels, setUniqueModels] = useState([]);
   const [creatingPin, setCreatingPin] = useState(false);
 
-  // 1. Thêm state để quản lý lỗi hiển thị trên UI
+  // State quản lý lỗi hiển thị trên UI
   const [errors, setErrors] = useState({});
 
   const [newCar, setNewCar] = useState({
@@ -27,7 +27,6 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) {
     sucKhoePin: "100",
   });
 
-  // Hàm lấy danh sách model pin từ server
   const loadUniqueModels = async () => {
     const token = localStorage.getItem("token");
     setLoadingModels(true);
@@ -120,6 +119,10 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) {
     return await response.json();
   };
 
+  // --- Regex định dạng biển số xe VN (VD: 51A-1234, 51A-12345, 51A-123.45) ---
+  const regexBienSo =
+    /^[0-9]{2}[A-Za-z]{1,2}-[0-9]{4,5}$|^[0-9]{2}[A-Za-z]{1,2}-[0-9]{3}\.[0-9]{2}$/;
+
   const handleSaveNew = async () => {
     const token = localStorage.getItem("token");
 
@@ -128,12 +131,23 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) {
       return;
     }
 
-    // Kiểm tra trước khi submit
+    // Kiểm tra toàn bộ lỗi trước khi submit
     let hasError = false;
     let newErrors = {};
 
+    // Validate Loại xe
     if (!newCar.loaiXe.trim()) {
       newErrors.loaiXe = "Không được loại xe để trống";
+      hasError = true;
+    }
+
+    // Validate Biển số
+    const trimmedBienSo = newCar.bienSo.trim();
+    if (!trimmedBienSo) {
+      newErrors.bienSo = "Không được để biển số trống";
+      hasError = true;
+    } else if (!regexBienSo.test(trimmedBienSo)) {
+      newErrors.bienSo = "Không hợp lệ";
       hasError = true;
     }
 
@@ -142,9 +156,10 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) {
     }
 
     if (!newCar.vin.trim() || !newCar.bienSo.trim() || !newCar.loaiXe.trim()) {
-      alert("Vui lòng điền đầy đủ thông tin xe!");
-      return;
+      return; // Chặn không cho gọi API nếu form trống
     }
+
+    if (hasError) return; // Chặn nếu dính regex hoặc trống
 
     if (!newCar.selectedPinType) {
       alert("Vui lòng chọn loại pin!");
@@ -159,8 +174,6 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) {
       alert("Vui lòng nhập sức khỏe pin từ 0-100%!");
       return;
     }
-
-    if (hasError) return;
 
     setCreatingPin(true);
 
@@ -185,7 +198,6 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) {
       });
 
       if (carResponse.ok) {
-        const savedCar = await carResponse.json();
         alert(`Thêm xe thành công! Đã tạo pin #${newPin.maPin} cho xe.`);
         onSuccess();
       } else {
@@ -204,7 +216,6 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) {
     }
   };
 
-  // Reset form và errors khi mở modal
   useEffect(() => {
     if (isOpen) {
       setNewCar({
@@ -216,17 +227,29 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) {
         dungLuongPin: "",
         sucKhoePin: "100",
       });
-      setErrors({}); // 2. Xóa thông báo lỗi cũ khi mở lại popup
+      setErrors({});
       loadUniqueModels();
     }
   }, [isOpen]);
 
-  // 3. Hàm xử lý khi blur (tab ra khỏi ô input)
+  // Xử lý khi blur Loại xe
   const handleBlurLoaiXe = () => {
     if (!newCar.loaiXe.trim()) {
       setErrors((prev) => ({ ...prev, loaiXe: "Không được loại xe để trống" }));
     } else {
       setErrors((prev) => ({ ...prev, loaiXe: "" }));
+    }
+  };
+
+  // Xử lý khi blur Biển số
+  const handleBlurBienSo = () => {
+    const trimmedBienSo = newCar.bienSo.trim();
+    if (!trimmedBienSo) {
+      setErrors((prev) => ({ ...prev, bienSo: "Không được để biển số trống" }));
+    } else if (!regexBienSo.test(trimmedBienSo)) {
+      setErrors((prev) => ({ ...prev, bienSo: "Không hợp lệ" }));
+    } else {
+      setErrors((prev) => ({ ...prev, bienSo: "" }));
     }
   };
 
@@ -256,16 +279,38 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) {
             placeholder="VD: VNFAST998877"
           />
         </div>
+
+        {/* ================= KHU VỰC BIỂN SỐ ================= */}
         <div className={styles.formdetail}>
           <label htmlFor="bienSo">Biển số *</label>
           <input
             id="bienSo"
             type="text"
             value={newCar.bienSo}
-            onChange={(e) => setNewCar({ ...newCar, bienSo: e.target.value })}
+            onChange={(e) => {
+              setNewCar({ ...newCar, bienSo: e.target.value });
+              // Ẩn lỗi khi người dùng bắt đầu gõ lại
+              if (errors.bienSo) setErrors((prev) => ({ ...prev, bienSo: "" }));
+            }}
+            onBlur={handleBlurBienSo} // Gọi validation khi Tab ra ngoài
             placeholder="VD: 51A-123.45"
           />
+          {errors.bienSo && (
+            <span
+              style={{
+                color: "red",
+                fontSize: "12px",
+                marginTop: "4px",
+                display: "block",
+              }}
+            >
+              {errors.bienSo}
+            </span>
+          )}
         </div>
+        {/* ================================================= */}
+
+        {/* ================= KHU VỰC LOẠI XE ================= */}
         <div className={styles.formdetail}>
           <label htmlFor="loaiXe">Loại xe *</label>
           <input
@@ -274,15 +319,11 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) {
             value={newCar.loaiXe}
             onChange={(e) => {
               setNewCar({ ...newCar, loaiXe: e.target.value });
-              // Xóa lỗi khi người dùng bắt đầu gõ lại
-              if (errors.loaiXe) {
-                setErrors((prev) => ({ ...prev, loaiXe: "" }));
-              }
+              if (errors.loaiXe) setErrors((prev) => ({ ...prev, loaiXe: "" }));
             }}
-            onBlur={handleBlurLoaiXe} // 4. Gắn sự kiện onBlur để check testcase Tab
+            onBlur={handleBlurLoaiXe}
             placeholder="VD: VinFast VF8"
           />
-          {/* 5. Thẻ hiển thị lỗi chữ đỏ kì vọng của CodeceptJS */}
           {errors.loaiXe && (
             <span
               style={{
@@ -296,6 +337,7 @@ function AddCarModal({ isOpen, onClose, onSuccess, maTaiXe }) {
             </span>
           )}
         </div>
+        {/* ================================================= */}
 
         <div className={styles.sectionDivider}>
           <h4>
