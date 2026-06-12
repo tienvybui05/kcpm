@@ -98,10 +98,12 @@ async function sendFailedTestToJira(test, err, meta, fingerprint, screenshotPath
   } catch (e) {
     console.log("❌ Jira error while creating/updating issue:");
 
-    if (e.response?.data) {
+    console.log("MESSAGE:", e.message);
+
+    if (e.response) {
+      console.log("STATUS:", e.response.status);
+      console.log("DATA:");
       console.log(JSON.stringify(e.response.data, null, 2));
-    } else {
-      console.log(e.message);
     }
   }
 }

@@ -18,4 +18,7 @@ Scenario("VIN rỗng", async ({ I }) => {
     I.fillField("#vin", "");
 
     I.click("Tạo Xe & Pin");
+
+    // KÌ VỌNG: Hệ thống chặn lại và báo lỗi trường Số VIN
+    I.see("Vui lòng nhập số VIN");
 });

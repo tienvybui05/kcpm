@@ -26,5 +26,12 @@ Data([
         I.fillField("#sucKhoePin", current.value);
 
         I.click("Tạo Xe & Pin");
+
+        // --- BỔ SUNG KÌ VỌNG VÀO ĐÂY ---
+        // Ví dụ 1: Kiểm tra thông báo thành công xuất hiện
+        I.see("Thêm xe mới và pin thành công!");
+
+        // Ví dụ 2: Hoặc kiểm tra modal biến mất và dữ liệu mới xuất hiện ở bảng
+        I.dontSee("Thêm Xe Mới & Tạo Pin");
     }
-);
+);  
