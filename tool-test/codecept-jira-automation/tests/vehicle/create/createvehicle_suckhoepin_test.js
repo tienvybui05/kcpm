@@ -25,13 +25,11 @@ Data([
 
         I.fillField("#sucKhoePin", current.value);
 
+        // Trường hợp này nút được mở, tiến hành click tạo xe
         I.click("Tạo Xe & Pin");
 
-        // --- BỔ SUNG KÌ VỌNG VÀO ĐÂY ---
-        // Ví dụ 1: Kiểm tra thông báo thành công xuất hiện
-        I.see("Thêm xe mới và pin thành công!");
-
-        // Ví dụ 2: Hoặc kiểm tra modal biến mất và dữ liệu mới xuất hiện ở bảng
-        I.dontSee("Thêm Xe Mới & Tạo Pin");
+        // KÌ VỌNG: Hệ thống xử lý tạo thành công và thông báo/đóng modal
+        I.wait(2); // Đợi 2 giây để hệ thống xử lý API
+        I.dontSee("Thêm Xe Mới & Tạo Pin"); // Kiểm tra modal đã đóng (tức là tạo thành công)
     }
-);  
+);

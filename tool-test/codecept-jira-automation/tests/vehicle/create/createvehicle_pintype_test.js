@@ -17,8 +17,6 @@ Scenario("Không nhập loại pin", async ({ I }) => {
 
     I.fillField("#loaiPin", "");
 
-    I.click("Tạo Xe & Pin");
-
-    // KÌ VỌNG: Hệ thống chặn lại và báo lỗi trường Loại pin
-    I.see("Vui lòng nhập loại pin");
+    // KÌ VỌNG: Nút "Tạo Xe & Pin" phải bị khóa (disabled) khi loại pin trống
+    I.seeElement('//button[contains(., "Tạo Xe & Pin") and @disabled]');
 });

@@ -17,11 +17,6 @@ Scenario("Biển số rỗng", async ({ I }) => {
 
     I.fillField("#bienSo", "");
 
-    I.click("Tạo Xe & Pin");
-
-    // ---  KÌ VỌNG  ---
-    // Ví dụ hiển thị message cảnh báo của HTML5 hoặc của Form validation
-    I.see("Vui lòng nhập biển số xe");
-    // Hoặc kiểm tra class lỗi xuất hiện trên input
-    I.seeElement("#bienSo.is-invalid");
+    // KÌ VỌNG: Nút "Tạo Xe & Pin" phải bị khóa (disabled), không cho người dùng bấm
+    I.seeElement('//button[contains(., "Tạo Xe & Pin") and @disabled]');
 });

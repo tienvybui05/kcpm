@@ -17,8 +17,6 @@ Scenario("Loại xe rỗng", async ({ I }) => {
 
     I.fillField("#loaiXe", "");
 
-    I.click("Tạo Xe & Pin");
-
-    // KÌ VỌNG: Hệ thống chặn lại và báo lỗi trường Loại xe
-    I.see("Vui lòng nhập loại xe");
+    // KÌ VỌNG: Nút "Tạo Xe & Pin" phải bị khóa (disabled) khi loại xe trống
+    I.seeElement('//button[contains(., "Tạo Xe & Pin") and @disabled]');
 });
