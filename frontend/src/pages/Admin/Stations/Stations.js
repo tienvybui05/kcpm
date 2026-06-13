@@ -53,10 +53,10 @@ export default function Stations() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Modal form thêm/sửa trạm
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState("add");
   const [selectedStation, setSelectedStation] = useState(null);
+
   const [formData, setFormData] = useState({
     tenTram: "",
     diaChi: "",
@@ -67,30 +67,60 @@ export default function Stations() {
     trangThai: "Hoạt động",
   });
 
-  // Modal BatteryGrid
   const [showBatteryGrid, setShowBatteryGrid] = useState(false);
   const [selectedStationId, setSelectedStationId] = useState(null);
+
+  // ===== VALIDATION =====
   const validatePhone = (phone) => {
     if (!phone) return "❌ Số điện thoại không được để trống.";
-
     if (/[a-zA-Z]/.test(phone)) return "❌ Số điện thoại chứa chữ cái.";
-
     if (/[^0-9]/.test(phone)) return "❌ Số điện thoại chứa ký tự đặc biệt.";
-
     if (phone.length < 10) return "❌ Số điện thoại nhỏ hơn 10 ký tự.";
-
     if (phone.length > 11) return "❌ Số điện thoại lớn hơn 11 ký tự.";
+    return null;
+  };
+
+  const validateKinhDo = (value) => {
+    if (value === "" || value === null || value === undefined)
+      return "❌ Kinh độ sai kiểu dữ liệu.";
+
+    if (/[a-zA-Z]/.test(value)) return "❌ Kinh độ sai kiểu dữ liệu.";
+
+    const num = Number(value);
+
+    if (Number.isNaN(num)) return "❌ Kinh độ sai kiểu dữ liệu.";
+
+    if (num < -180) return "❌ Kinh độ nhỏ hơn -180.";
+
+    if (num > 180) return "❌ Kinh độ lớn hơn 180.";
 
     return null;
   };
-  // Gọi API danh sách trạm
+
+  const validateViDo = (value) => {
+    if (value === "" || value === null || value === undefined)
+      return "❌ Vĩ độ sai kiểu dữ liệu.";
+
+    if (/[a-zA-Z]/.test(value)) return "❌ Vĩ độ sai kiểu dữ liệu.";
+
+    const num = Number(value);
+
+    if (Number.isNaN(num)) return "❌ Vĩ độ sai kiểu dữ liệu.";
+
+    if (num < -90) return "❌ Vĩ độ nhỏ hơn -90.";
+
+    if (num > 90) return "❌ Vĩ độ lớn hơn 90.";
+
+    return null;
+  };
+
+  // ===== FETCH =====
   useEffect(() => {
     const fetchStations = async () => {
       try {
         const res = await axios.get("/api/station-service/tram");
         setStations(res.data);
       } catch (err) {
-        console.error("❌ Lỗi khi tải danh sách trạm:", err);
         setError("Không thể tải danh sách trạm");
       } finally {
         setLoading(false);
@@ -99,6 +129,7 @@ export default function Stations() {
     fetchStations();
   }, []);
 
+  // ===== MODAL =====
   const openModal = (mode, station = null) => {
     setModalMode(mode);
     if (station) {
@@ -119,54 +150,49 @@ export default function Stations() {
   };
 
   const closeModal = () => {
-    setFormData({
-      tenTram: "",
-      diaChi: "",
-      kinhDo: "",
-      viDo: "",
-      soLuongPinToiDa: "",
-      soDT: "",
-      trangThai: "Hoạt động",
-    });
-    setSelectedStation(null);
     setShowModal(false);
+    setSelectedStation(null);
   };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // ===== SUBMIT =====
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // =========================
-    // FRONTEND VALIDATION BASIC
-    // =========================
+    if (formData.diaChi.length > 250) return alert("❌ Địa chỉ lố 250 kí tự.");
 
-    if (formData.diaChi.length > 250) {
-      alert("❌ Địa chỉ lố 250 kí tự.");
-      return;
-    }
+    if (formData.tenTram.length > 150)
+      return alert("❌ Tên trạm lố 150 kí tự.");
 
-    if (formData.tenTram.length > 150) {
-      alert("❌ Tên trạm lố 150 kí tự.");
-      return;
-    }
     const phoneError = validatePhone(formData.soDT);
-    if (phoneError) {
-      alert(phoneError);
-      return;
-    }
+    if (phoneError) return alert(phoneError);
+
+    const kinDoError = validateKinhDo(formData.kinhDo);
+    if (kinDoError) return alert(kinDoError);
+
+    const viDoError = validateViDo(formData.viDo);
+    if (viDoError) return alert(viDoError);
+
+    // convert trước khi gửi API
+    const payload = {
+      ...formData,
+      kinhDo: Number(formData.kinhDo),
+      viDo: Number(formData.viDo),
+      soLuongPinToiDa: Number(formData.soLuongPinToiDa),
+    };
+
     try {
       if (modalMode === "add") {
-        const res = await axios.post("/api/station-service/tram", formData);
-
+        const res = await axios.post("/api/station-service/tram", payload);
         setStations((prev) => [...prev, res.data]);
         alert("✅ Thêm trạm thành công!");
-      } else if (modalMode === "edit") {
+      } else {
         const res = await axios.put(
           `/api/station-service/tram/${selectedStation.maTram}`,
-          formData,
+          payload,
         );
 
         setStations((prev) =>
@@ -180,19 +206,12 @@ export default function Stations() {
 
       setShowModal(false);
     } catch (err) {
-      let message = err?.response?.data?.message;
-
-      if (message) {
-        alert(`❌ ${message}`);
-      } else {
-        alert("❌ Không thể lưu dữ liệu.");
-      }
+      alert(err?.response?.data?.message || "❌ Không thể lưu dữ liệu.");
     }
   };
 
-  if (loading) return <p>Đang tải dữ liệu trạm...</p>;
+  if (loading) return <p>Đang tải dữ liệu...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
-
   return (
     <div className={styles.wrapper}>
       {/* ===== KPI Section ===== */}
@@ -366,7 +385,7 @@ export default function Stations() {
                   <div className={styles.formGroup}>
                     <label>Kinh Độ *</label>
                     <input
-                      type="number"
+                      type="text"
                       name="kinhDo"
                       step="any"
                       placeholder="VD: 106.6821"
@@ -378,7 +397,7 @@ export default function Stations() {
                   <div className={styles.formGroup}>
                     <label>Vĩ Độ *</label>
                     <input
-                      type="number"
+                      type="text"
                       name="viDo"
                       step="any"
                       placeholder="VD: 10.7626"

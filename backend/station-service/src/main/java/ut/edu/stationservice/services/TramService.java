@@ -23,7 +23,7 @@ public class TramService implements ITramService {
             throw new RuntimeException("Tên trạm rỗng");
         }
         if (tramRepository.existsByTenTram(tram.getTenTram().trim())) {
-            throw new RuntimeException("Tên trạm trùng");
+            throw new RuntimeException("❌ Tên trạm trùng");
         }
 
         if (tram.getTenTram().length() > 150) {
