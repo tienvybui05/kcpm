@@ -51,6 +51,25 @@ const Register = () => {
     setLoading(true);
 
     try {
+      // === Fix bug validate hoten : KIỂM TRA HỌ TÊN ===
+      const hoTenValue = formData.Ho_Ten.trim();
+
+      // 1. Kiểm tra họ tên phải >= 2 ký tự
+      if (hoTenValue.length < 2) {
+        throw new Error("Họ tên phải ≥2 ký tự");
+      }
+
+      // 2. Kiểm tra họ tên phải <= 64 ký tự
+      if (formData.Ho_Ten.length > 64) {
+        throw new Error("Họ tên ≤64 ký tự");
+      }
+
+      // 3. Kiểm tra ký tự đặc biệt (Chỉ cho phép chữ cái Tiếng Việt, Tiếng Anh và khoảng trắng)
+      const vnmeseNameRegex = /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂÂÊÔƠỨỨỬỮỰẤẤẨẪẬẮẮẲẴẶẾẾỂỄỆỐỐỔỖỘỚỚỞỠỢỨỨỬỮỰỳýỵỷỹ\s]+$/;
+      if (!vnmeseNameRegex.test(formData.Ho_Ten)) {
+        throw new Error("Ký tự không hợp lệ");
+      }
+      // ===================================
       // KIỂM TRA MẬT KHẨU TỐI THIỂU 6 KÝ TỰ
       if (formData.Mat_Khau.length < 6) {
         throw new Error("Mật khẩu phải có ít nhất 6 ký tự!");
