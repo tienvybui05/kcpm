@@ -87,7 +87,14 @@ if (tram.getViDo() > 90) {
         if (tram.getTrangThai() == null || tram.getTrangThai().trim().isEmpty()) {
             throw new RuntimeException("trạng thái rỗng");
         }
-
+        if (!tram.getTrangThai().equals("Hoạt động")
+        && !tram.getTrangThai().equals("Bảo trì")
+        && !tram.getTrangThai().equals("Tạm dừng")) {
+    throw new RuntimeException("trangThai sai dữ liệu");
+}
+if (tram.getSoLuongPinToiDa() > 200) {
+    throw new RuntimeException("số lượng pin tối đa > 200");
+}
         tram.setTenTram(tram.getTenTram().trim());
         return tramRepository.save(tram);
     }
@@ -168,7 +175,14 @@ if (tram.getViDo() > 90) {
                     if (tram.getTrangThai() == null || tram.getTrangThai().trim().isEmpty()) {
                         throw new RuntimeException("trạng thái rỗng");
                     }
-
+                    if (!tram.getTrangThai().equals("Hoạt động")
+        && !tram.getTrangThai().equals("Bảo trì")
+        && !tram.getTrangThai().equals("Tạm dừng")) {
+    throw new RuntimeException("trangThai sai dữ liệu");
+}
+if (tram.getSoLuongPinToiDa() > 200) {
+    throw new RuntimeException("số lượng pin tối đa > 200");
+}
                     existing.setTenTram(tram.getTenTram());
                     existing.setDiaChi(tram.getDiaChi());
                     existing.setKinhDo(tram.getKinhDo());
