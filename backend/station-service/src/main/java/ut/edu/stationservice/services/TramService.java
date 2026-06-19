@@ -41,9 +41,13 @@ public class TramService implements ITramService {
         if (tram.getKinhDo() == null) {
             throw new RuntimeException("kinh độ bị rỗng");
         }
-        if (tram.getKinhDo() < -180 || tram.getKinhDo() > 180) {
-            throw new RuntimeException("kinh độ vượt biên (>180)");
-        }
+        if (tram.getKinhDo() < -180) {
+    throw new RuntimeException("kinh độ vượt biên (<-180)");
+}
+
+if (tram.getKinhDo() > 180) {
+    throw new RuntimeException("kinh độ vượt biên (>180)");
+}
 
         if (tram.getViDo() == null) {
             throw new RuntimeException("Vĩ độ bị rỗng");
