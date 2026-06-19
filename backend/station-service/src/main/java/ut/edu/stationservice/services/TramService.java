@@ -52,9 +52,13 @@ if (tram.getKinhDo() > 180) {
         if (tram.getViDo() == null) {
             throw new RuntimeException("Vĩ độ bị rỗng");
         }
-        if (tram.getViDo() < -90 || tram.getViDo() > 90) {
-            throw new RuntimeException("vĩ độ vượt biên (>90)");
-        }
+        if (tram.getViDo() < -90) {
+    throw new RuntimeException("vĩ độ vượt biên (<-90)");
+}
+
+if (tram.getViDo() > 90) {
+    throw new RuntimeException("vĩ độ vượt biên (>90)");
+}
 
         if (tram.getSoLuongPinToiDa() == null) {
             throw new RuntimeException("pin rỗng"); // Khớp với test [pin rỗng]
@@ -119,17 +123,25 @@ if (tram.getKinhDo() > 180) {
                     if (tram.getKinhDo() == null) {
                         throw new RuntimeException("kinh độ bị rỗng");
                     }
-                    if (tram.getKinhDo() < -180 || tram.getKinhDo() > 180) {
-                        throw new RuntimeException("kinh độ vượt biên (>180)");
-                    }
+                    if (tram.getKinhDo() < -180) {
+    throw new RuntimeException("kinh độ vượt biên (<-180)");
+}
+
+if (tram.getKinhDo() > 180) {
+    throw new RuntimeException("kinh độ vượt biên (>180)");
+}
 
                     // 4. Validate Vĩ độ
                     if (tram.getViDo() == null) {
                         throw new RuntimeException("vĩ độ bị rỗng");
                     }
-                    if (tram.getViDo() < -90 || tram.getViDo() > 90) {
-                        throw new RuntimeException("vĩ độ vượt biên (>90)");
-                    }
+                   if (tram.getViDo() < -90) {
+    throw new RuntimeException("vĩ độ vượt biên (<-90)");
+}
+
+if (tram.getViDo() > 90) {
+    throw new RuntimeException("vĩ độ vượt biên (>90)");
+}
 
                     if (tram.getSoLuongPinToiDa() == null) {
                         throw new RuntimeException("pin rỗng");
