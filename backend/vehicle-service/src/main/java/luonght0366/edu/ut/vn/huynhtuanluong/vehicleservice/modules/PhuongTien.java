@@ -16,7 +16,7 @@ public class PhuongTien {
     @Column(nullable = false, unique = true, length = 20)
     private String bienSo;
 
-    @Column(nullable = false, length = 40)
+    @Column(nullable = false, length = 100)
     private String loaiXe;
 
     // Khóa ngoại tham chiếu sang tài xế (service user)

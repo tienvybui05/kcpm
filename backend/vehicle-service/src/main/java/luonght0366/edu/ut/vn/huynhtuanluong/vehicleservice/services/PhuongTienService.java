@@ -160,6 +160,15 @@ public class PhuongTienService implements IPhuongTienService {
             throw new IllegalArgumentException("Loại xe không được để trống");
         }
 
+        String loaiXeTrim = dto.getLoaiXe().trim();
+        if (loaiXeTrim.length() < 2) {
+            throw new IllegalArgumentException("Tên loại xe quá ngắn");
+        }
+
+        if (loaiXeTrim.length() > 50) {
+            throw new IllegalArgumentException("Tên loại xe không được vượt quá 50 ký tự");
+        }
+
         if (dto.getMaTaiXe() == null) {
             throw new IllegalArgumentException("Mã tài xế không được để trống");
         }
@@ -184,6 +193,15 @@ public class PhuongTienService implements IPhuongTienService {
                 throw new IllegalArgumentException("Biển số không được để trống");
             }
             validateLicensePlate(dto.getBienSo());
+        }
+
+        if (dto.getLoaiXe() != null) {
+            if (dto.getLoaiXe().trim().isEmpty()) {
+                throw new IllegalArgumentException("Loại xe không được để trống");
+            }
+            if (dto.getLoaiXe().trim().length() < 2) {
+                throw new IllegalArgumentException("Tên loại xe quá ngắn");
+            }
         }
     }
 
