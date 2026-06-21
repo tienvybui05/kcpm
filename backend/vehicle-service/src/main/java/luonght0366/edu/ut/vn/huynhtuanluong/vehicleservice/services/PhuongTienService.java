@@ -16,7 +16,7 @@ public class PhuongTienService implements IPhuongTienService {
     @Autowired
     private IPhuongTienRepository phuongTienRepository;
 
-    private static final String LICENSE_PLATE_REGEX = "^\\d{2}[A-Z]-\\d{4,5}$";
+    private static final String LICENSE_PLATE_REGEX = "^\\d{2}[A-Z]-\\d{3}(\\.\\d{2}|\\d{1,2})$";
 
     @Transactional
     @Override
@@ -39,7 +39,7 @@ public class PhuongTienService implements IPhuongTienService {
 
         // Theo test Postman: tạo xe chưa được gắn pin.
         // Muốn gắn pin thì dùng API /link-pin/{pinId}
-        v.setMaPin(null);
+        v.setMaPin(dto.getMaPin());
 
         return phuongTienRepository.save(v);
     }
