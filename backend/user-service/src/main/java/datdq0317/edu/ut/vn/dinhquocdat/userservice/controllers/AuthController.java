@@ -29,6 +29,7 @@ import datdq0317.edu.ut.vn.dinhquocdat.userservice.services.ITaiXeService;
 import datdq0317.edu.ut.vn.dinhquocdat.userservice.services.RedisService;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/user-service/auth")
@@ -205,7 +206,7 @@ if (request.getMatKhau() == null ||
     }
 }
     @PostMapping("/register-tai-xe")
-    public ResponseEntity<?> registerTaiXe(@RequestBody TaiXeDTO dto) {
+    public ResponseEntity<?> registerTaiXe(@Valid @RequestBody TaiXeDTO dto) {
         try {
             System.out.println("Đã vào API /register-tai-xe với DTO: " + dto);
             TaiXe taiXe = taiXeService.themTaiXe(dto);

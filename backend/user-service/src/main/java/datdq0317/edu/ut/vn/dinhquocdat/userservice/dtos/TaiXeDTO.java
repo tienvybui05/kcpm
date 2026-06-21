@@ -1,8 +1,17 @@
 package datdq0317.edu.ut.vn.dinhquocdat.userservice.dtos;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDate;
 
+
 public class TaiXeDTO {
+
+    @NotBlank(message = "Họ tên không được để trống")
+    @Size(min = 1, max = 50, message = "Họ tên phải từ 1-50 ký tự")
+    @Pattern(regexp = "^[^0-9]*$", message = "Họ tên chỉ được chứa chữ cái")
     private String hoTen;
     private String email;
     private String soDienThoai;

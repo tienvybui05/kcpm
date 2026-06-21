@@ -19,6 +19,9 @@ import datdq0317.edu.ut.vn.dinhquocdat.userservice.dtos.TaiXeDTO;
 import datdq0317.edu.ut.vn.dinhquocdat.userservice.dtos.TaiXeResponse;
 import datdq0317.edu.ut.vn.dinhquocdat.userservice.models.TaiXe;
 import datdq0317.edu.ut.vn.dinhquocdat.userservice.services.ITaiXeService;
+
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/user-service/taixe")
 public class TaiXeController {
@@ -27,7 +30,7 @@ public class TaiXeController {
     private ITaiXeService taiXeService;
 
     @PostMapping
-    public ResponseEntity<TaiXe> themTaiXe(@RequestBody TaiXeDTO dto) {
+    public ResponseEntity<TaiXe> themTaiXe(@Valid @RequestBody TaiXeDTO dto) {
         TaiXe tx = taiXeService.themTaiXe(dto);
         return ResponseEntity.ok(tx);
     }
