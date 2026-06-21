@@ -16,7 +16,7 @@ public class PhuongTienService implements IPhuongTienService {
     @Autowired
     private IPhuongTienRepository phuongTienRepository;
 
-    private static final String LICENSE_PLATE_REGEX = "^\\d{2}[A-Z]-\\d{3}(\\.\\d{2}|\\d{1,2})$";
+    private static final String LICENSE_PLATE_REGEX = "^\\d{2}[A-Z]-?\\d{3,4}(\\.\\d{2,4}|\\d{1,4})$";
 
     private static final String VIN_REGEX = "^[A-HJ-NPR-Z0-9a-hj-npr-z]{17}$";
 
@@ -203,9 +203,21 @@ public class PhuongTienService implements IPhuongTienService {
     }
 
     private void validateLicensePlate(String bienSo) {
+        if (bienSo == null || bienSo.trim().isEmpty()) {
+            throw new IllegalArgumentException("Biển số không được để trống");
+        }
+
         String value = bienSo.trim().toUpperCase();
 
-        if (!value.matches(LICENSE_PLATE_REGEX)) {
+        // 1. Kiểm tra giới hạn độ dài trước (7 - 12 ký tự) để pass đúng case lỗi độ dài
+        if (value.length() > 12) {
+            throw new IllegalArgumentException("Biển số vượt quá độ dài quy định");
+        }
+
+        // 2. Kiểm tra định dạng Regex (Lúc này Regex không cần cụm Lookahead độ dài nữa vì đã check ở trên)
+        // Regex tinh gọn lại:
+        String tinhGonRegex = "^\\d{2}[A-Z]-?\\d{3,4}(\\.\\d{2,4}|\\d{1,4})$";
+        if (!value.matches(tinhGonRegex)) {
             throw new IllegalArgumentException("Dữ liệu JSON sai định dạng hoặc biển số không hợp lệ");
         }
     }
