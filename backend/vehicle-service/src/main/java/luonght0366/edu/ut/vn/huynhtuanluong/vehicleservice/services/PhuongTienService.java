@@ -18,6 +18,8 @@ public class PhuongTienService implements IPhuongTienService {
 
     private static final String LICENSE_PLATE_REGEX = "^\\d{2}[A-Z]-\\d{3}(\\.\\d{2}|\\d{1,2})$";
 
+    private static final String VIN_REGEX = "^[A-HJ-NPR-Z0-9a-hj-npr-z]{17}$";
+
     @Transactional
     @Override
     public PhuongTien themPhuongTien(PhuongTienDTO dto) {
@@ -147,6 +149,9 @@ public class PhuongTienService implements IPhuongTienService {
             throw new IllegalArgumentException("VIN không được để trống");
         }
 
+        // Thêm đoạn check VIN ở đây
+        validateVin(dto.getVin());
+
         if (isBlank(dto.getBienSo())) {
             throw new IllegalArgumentException("Biển số không được để trống");
         }
@@ -167,8 +172,11 @@ public class PhuongTienService implements IPhuongTienService {
             throw new IllegalArgumentException("Dữ liệu JSON không hợp lệ");
         }
 
-        if (dto.getVin() != null && isBlank(dto.getVin())) {
-            throw new IllegalArgumentException("VIN không được để trống");
+        if (dto.getVin() != null) {
+            if (isBlank(dto.getVin())) {
+                throw new IllegalArgumentException("VIN không được để trống");
+            }
+            validateVin(dto.getVin());
         }
 
         if (dto.getBienSo() != null) {
@@ -176,6 +184,21 @@ public class PhuongTienService implements IPhuongTienService {
                 throw new IllegalArgumentException("Biển số không được để trống");
             }
             validateLicensePlate(dto.getBienSo());
+        }
+    }
+
+    // Viết thêm hàm helper validateVin này ở dưới cùng file Service
+    private void validateVin(String vin) {
+        String value = vin.trim();
+
+        // Check độ dài trước để ăn khớp với câu báo lỗi của Postman test
+        if (value.length() != 17) {
+            throw new IllegalArgumentException("Mã VIN phải có độ dài đúng 17 ký tự");
+        }
+
+        // Check ký tự hợp lệ (Không chứa I, O, Q)
+        if (!value.matches(VIN_REGEX)) {
+            throw new IllegalArgumentException("Mã VIN không đúng định dạng chuẩn quốc tế");
         }
     }
 
