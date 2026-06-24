@@ -18,34 +18,72 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
+//@Configuration
+//public class SecurityConfig {
+//
+//    @Autowired
+//    private JwtFilter jwtFilter;
+//
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http.csrf(AbstractHttpConfigurer::disable)
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/api/user-service/**").permitAll()
+//                        .anyRequest().authenticated()
+//                )
+//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//        return http.build();
+//    }
+//
+//    @Bean
+//    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+//        return config.getAuthenticationManager();
+//    }
+//
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+//}
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Autowired
     private JwtFilter jwtFilter;
-
-    @Autowired
+    @Autowired  // THÊM DÒNG NÀY
     private CustomUserDetailsService customUserDetailsService;
-
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http.csrf(csrf -> csrf.disable())
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/api/user-service/auth/**").permitAll() // Cho phép tất cả các endpoint auth
+    ////                        .requestMatchers("/api/user-service/public/**").permitAll()
+//                        .anyRequest().authenticated()
+//                )
+//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//        return http.build();
+//    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource())) // Đã gắn cấu hình CORS vào HttpSecurity
-                .csrf(csrf -> csrf.disable()) // QUAN TRỌNG: Tắt CSRF
+        http.csrf(csrf -> csrf.disable()) // QUAN TRỌNG: Tắt CSRF
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/user-service/auth/**").permitAll()
-                        //  Cho phép API đăng ký tài xế đi qua để không bị 403
+                        // ✅ AI ĐƯỢC TRUY CẬP API TÀI XẾ
                         .requestMatchers("/api/user-service/taixe/**").permitAll()
                         .requestMatchers("/api/user-service/fcm/**").permitAll()
+
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -59,7 +97,6 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
@@ -69,7 +106,6 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();

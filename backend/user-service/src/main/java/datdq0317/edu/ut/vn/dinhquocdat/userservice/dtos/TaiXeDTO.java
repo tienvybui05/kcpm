@@ -14,6 +14,10 @@ public class TaiXeDTO {
     @Pattern(regexp = "^[^0-9]*$", message = "Họ tên chỉ được chứa chữ cái")
     private String hoTen;
     private String email;
+
+    @Pattern(regexp = "^[0-9]*$", message = "Số điện thoại chỉ được chứa chữ số")
+    @Pattern(regexp = "^(0.*)?$", message = "Số điện thoại phải bắt đầu bằng 0")
+    @Pattern(regexp = "^(.{10})?$", message = "Số điện thoại phải đúng 10 chữ số")
     private String soDienThoai;
     private String gioiTinh;
     private String matKhau;
