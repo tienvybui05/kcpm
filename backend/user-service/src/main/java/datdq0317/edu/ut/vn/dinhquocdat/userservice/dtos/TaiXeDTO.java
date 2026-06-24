@@ -34,6 +34,8 @@ public class TaiXeDTO {
     @Past(message = "Ngày sinh không được là ngày trong tương lai")
     private LocalDate ngaySinh;
 
+    @NotBlank(message = "Bằng lái xe không được để trống")
+    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Bằng lái xe không hợp lệ")
     private String bangLaiXe;
 
     public String getHoTen() {
