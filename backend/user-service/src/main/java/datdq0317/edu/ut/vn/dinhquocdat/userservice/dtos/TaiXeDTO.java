@@ -19,7 +19,11 @@ public class TaiXeDTO {
     @Pattern(regexp = "^(0.*)?$", message = "Số điện thoại phải bắt đầu bằng 0")
     @Pattern(regexp = "^(.{10})?$", message = "Số điện thoại phải đúng 10 chữ số")
     private String soDienThoai;
+
+    @NotBlank(message = "Giới tính không được để trống")
+    @Pattern(regexp = "^(Nam|Nữ)$", message = "Giới tính phải là 'Nam' hoặc 'Nữ'")
     private String gioiTinh;
+
     private String matKhau;
     private LocalDate ngaySinh;
     private String bangLaiXe;
