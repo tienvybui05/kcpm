@@ -1,6 +1,7 @@
 package datdq0317.edu.ut.vn.dinhquocdat.userservice.dtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -30,7 +31,9 @@ public class TaiXeDTO {
     @Pattern(regexp = ".*[0-9].*", message = "Mật khẩu phải chứa ít nhất 1 chữ số")
     private String matKhau;
 
+    @Past(message = "Ngày sinh không được là ngày trong tương lai")
     private LocalDate ngaySinh;
+
     private String bangLaiXe;
 
     public String getHoTen() {
