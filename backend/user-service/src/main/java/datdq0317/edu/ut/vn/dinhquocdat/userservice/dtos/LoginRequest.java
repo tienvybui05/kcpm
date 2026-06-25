@@ -2,6 +2,7 @@ package datdq0317.edu.ut.vn.dinhquocdat.userservice.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public class LoginRequest {
 
@@ -11,6 +12,10 @@ public class LoginRequest {
     @Pattern(regexp = "^(.{10})?$", message = "Số điện thoại phải đúng 10 chữ số")
     private String soDienThoai;
 
+    @Size(min = 6, max = 20, message = "Mật khẩu phải từ 6-20 ký tự")
+    @Pattern(regexp = ".*[A-Z].*", message = "Mật khẩu phải chứa ít nhất 1 chữ hoa")
+    @Pattern(regexp = ".*[a-z].*", message = "Mật khẩu phải chứa ít nhất 1 chữ thường")
+    @Pattern(regexp = ".*[0-9].*", message = "Mật khẩu phải chứa ít nhất 1 chữ số")
     private String matKhau;
 
     // Constructor rỗng
