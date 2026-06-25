@@ -18,64 +18,70 @@ Before(async ({ I }) => {
   await openAddStationModal(I);
 });
 
-Scenario("TC_CREATESTATION - Tên trạm hợp lệ min 1 ký tự", ({ I }) => {
-  fillNominalFormForTenTram(I);
-  I.fillField('input[name="tenTram"]', generateUniqueString(1));
+Scenario(
+  "TC_CREATESTATION - [tenTram - Min-=0] Tạo trạm với tenTram = Rỗng",
+  async ({ I }) => {
+    await fillNominalFormForTenTram(I);
+    await fillFieldFast(I, 'input[name="tenTram"]', "");
 
-  I.click("Thêm Trạm", "form");
+    I.click("Thêm Trạm", "form");
 
-  waitAndSeePopup(I, "✅ Thêm trạm thành công!");
-});
-
-Scenario("TC_CREATESTATION - Tên trạm hợp lệ min+ 2 ký tự", ({ I }) => {
-  fillNominalFormForTenTram(I);
-  I.fillField('input[name="tenTram"]', generateUniqueString(2));
-
-  I.click("Thêm Trạm", "form");
-
-  waitAndSeePopup(I, "✅ Thêm trạm thành công!");
-});
-
-Scenario("TC_CREATESTATION - Tên trạm hợp lệ nom 75 ký tự", async ({ I }) => {
-  fillNominalFormForTenTram(I);
-  await fillFieldFast(I, 'input[name="tenTram"]', generateUniqueString(75));
-
-  I.click("Thêm Trạm", "form");
-
-  waitAndSeePopup(I, "✅ Thêm trạm thành công!");
-});
-
-Scenario("TC_CREATESTATION - Tên trạm hợp lệ max- 149 ký tự", async ({ I }) => {
-  fillNominalFormForTenTram(I);
-  await fillFieldFast(I, 'input[name="tenTram"]', generateUniqueString(149));
-
-  I.click("Thêm Trạm", "form");
-
-  waitAndSeePopup(I, "✅ Thêm trạm thành công!");
-});
-
-Scenario("TC_CREATESTATION - Tên trạm hợp lệ max 150 ký tự", async ({ I }) => {
-  fillNominalFormForTenTram(I);
-  await fillFieldFast(I, 'input[name="tenTram"]', generateUniqueString(150));
-
-  I.click("Thêm Trạm", "form");
-
-  waitAndSeePopup(I, "✅ Thêm trạm thành công!");
-});
-
-Scenario("TC_CREATESTATION - Không nhập tên trạm", ({ I }) => {
-  fillNominalFormForTenTram(I);
-  I.clearField('input[name="tenTram"]');
-
-  I.click("Thêm Trạm", "form");
-
-  I.seeElement('input[name="tenTram"]:invalid');
-});
+    I.seeElement('input[name="tenTram"]:invalid');
+  },
+);
 
 Scenario(
-  "TC_CREATESTATION - Tên trạm vượt quá giới hạn 150 ký tự",
+  "TC_CREATESTATION - [tenTram - Min=1] Tạo trạm với tenTram = 1 ký tự",
   async ({ I }) => {
-    fillNominalFormForTenTram(I);
+    await fillNominalFormForTenTram(I);
+    await fillFieldFast(I, 'input[name="tenTram"]', generateUniqueString(1));
+
+    I.click("Thêm Trạm", "form");
+
+    waitAndSeePopup(I, "✅ Thêm trạm thành công!");
+  },
+);
+
+Scenario(
+  "TC_CREATESTATION - [tenTram - Min+=2] Tạo trạm với tenTram = 2 ký tự",
+  async ({ I }) => {
+    await fillNominalFormForTenTram(I);
+    await fillFieldFast(I, 'input[name="tenTram"]', generateUniqueString(2));
+
+    I.click("Thêm Trạm", "form");
+
+    waitAndSeePopup(I, "✅ Thêm trạm thành công!");
+  },
+);
+
+Scenario(
+  "TC_CREATESTATION - [tenTram - Max-=149] Tạo trạm với tenTram = 149 ký tự",
+  async ({ I }) => {
+    await fillNominalFormForTenTram(I);
+    await fillFieldFast(I, 'input[name="tenTram"]', generateUniqueString(149));
+
+    I.click("Thêm Trạm", "form");
+
+    waitAndSeePopup(I, "✅ Thêm trạm thành công!");
+  },
+);
+
+Scenario(
+  "TC_CREATESTATION - [tenTram - Max=150] Tạo trạm với tenTram = 150 ký tự",
+  async ({ I }) => {
+    await fillNominalFormForTenTram(I);
+    await fillFieldFast(I, 'input[name="tenTram"]', generateUniqueString(150));
+
+    I.click("Thêm Trạm", "form");
+
+    waitAndSeePopup(I, "✅ Thêm trạm thành công!");
+  },
+);
+
+Scenario(
+  "TC_CREATESTATION - [tenTram - Max+=151] Tạo trạm với tenTram = 151 ký tự",
+  async ({ I }) => {
+    await fillNominalFormForTenTram(I);
     await fillFieldFast(I, 'input[name="tenTram"]', generateString(151));
 
     I.click("Thêm Trạm", "form");
@@ -84,23 +90,25 @@ Scenario(
   },
 );
 
-Scenario("TC_CREATESTATION - Tên trạm đã tồn tại trong hệ thống", ({ I }) => {
-  const duplicateName = "TRAM_DUP_" + Date.now();
+Scenario(
+  "TC_CREATESTATION - [tenTram - Error=Trùng lặp] Tạo trạm với tenTram đã tồn tại",
+  async ({ I }) => {
+    const duplicateName = "TRAM_DUP_" + Date.now();
 
-  fillNominalFormForTenTram(I);
-  I.fillField('input[name="tenTram"]', duplicateName);
+    // Lần 1
+    await fillNominalFormForTenTram(I);
+    await fillFieldFast(I, 'input[name="tenTram"]', duplicateName);
+    I.click("Thêm Trạm", "form");
+    waitAndSeePopup(I, "✅ Thêm trạm thành công!");
 
-  I.click("Thêm Trạm", "form");
+    // Lần 2
+    I.click("Thêm Trạm");
+    I.waitForText("Thêm Trạm Mới", 5);
 
-  waitAndSeePopup(I, "✅ Thêm trạm thành công!");
+    await fillNominalFormForTenTram(I);
+    await fillFieldFast(I, 'input[name="tenTram"]', duplicateName);
+    I.click("Thêm Trạm", "form");
 
-  I.click("Thêm Trạm");
-  I.waitForText("Thêm Trạm Mới", 5);
-
-  fillNominalFormForTenTram(I);
-  I.fillField('input[name="tenTram"]', duplicateName);
-
-  I.click("Thêm Trạm", "form");
-
-  waitAndSeePopup(I, "❌ Tên trạm trùng");
-});
+    waitAndSeePopup(I, "❌ Tên trạm trùng");
+  },
+);
