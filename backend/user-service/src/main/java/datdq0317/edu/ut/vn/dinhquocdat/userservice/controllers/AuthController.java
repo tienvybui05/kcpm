@@ -102,7 +102,7 @@ public class AuthController {
      */
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         try {
 
              // VALIDATE SỐ ĐIỆN THOẠI
@@ -115,12 +115,12 @@ public class AuthController {
 }
 
 // VALIDATE FORMAT SỐ ĐIỆN THOẠI
-if (!request.getSoDienThoai().matches("^0\\d{9}$")) {
-
-    return ResponseEntity.badRequest().body(
-        Map.of("message", "Số điện thoại không đúng định dạng")
-    );
-}
+//if (!request.getSoDienThoai().matches("^0\\d{9}$")) {
+//
+//    return ResponseEntity.badRequest().body(
+//        Map.of("message", "Số điện thoại không đúng định dạng")
+//    );
+//}
 
 // VALIDATE MẬT KHẨU
 if (request.getMatKhau() == null ||
