@@ -1,41 +1,59 @@
 package ngocvct0133.ut.edu.transactionservice.modules;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "giaodichdoipin")
 public class GiaoDichDoiPin {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long maGiaoDichDoiPin;
+
     @NotBlank(message = "maPinTra is required")
+    @Size(min = 5, max = 20, message = "maPinTra must be between 5 and 20 characters")
     private String maPinTra;
+
     @NotBlank(message = "maPinNhan is required")
+    @Size(min = 5, max = 20, message = "maPinNhan must be between 5 and 20 characters")
     private String maPinNhan;
+
     @NotNull(message = "ngayGiaoDich is required")
     private LocalDateTime ngayGiaoDich;
+
     @NotBlank(message = "trangThaiGiaoDich is required")
     @Pattern(regexp = "^(Đang xử lý|Đã hoàn thành)$", message = "trangThaiGiaoDich is invalid")
     private String trangThaiGiaoDich;
+
     @NotNull(message = "thanhtien is required")
+    @DecimalMin(value = "0", inclusive = true, message = "thanhtien must be greater than or equal to 0")
+    @DecimalMax(value = "1000000", inclusive = true, message = "thanhtien must be less than or equal to 1000000")
     private Double thanhtien;
+
     @NotBlank(message = "phuongThucThanhToan is required")
     @Pattern(regexp = "^(card|cash|package)$", message = "phuongThucThanhToan is invalid")
     private String phuongThucThanhToan;
+
     @NotNull(message = "maTram is required")
     private Long maTram;
+
     @NotNull(message = "maTaiXe is required")
     private Long maTaiXe;
 
     public GiaoDichDoiPin() {
     }
 
-    public GiaoDichDoiPin(Long maGiaoDichDoiPin, String maPinTra, String maPinNhan, LocalDateTime ngayGiaoDich, String trangThaiGiaoDich, Double thanhtien, String phuongThucThanhToan) {
+    public GiaoDichDoiPin(Long maGiaoDichDoiPin, String maPinTra, String maPinNhan,
+                          LocalDateTime ngayGiaoDich, String trangThaiGiaoDich,
+                          Double thanhtien, String phuongThucThanhToan) {
         this.maGiaoDichDoiPin = maGiaoDichDoiPin;
         this.maPinTra = maPinTra;
         this.maPinNhan = maPinNhan;
