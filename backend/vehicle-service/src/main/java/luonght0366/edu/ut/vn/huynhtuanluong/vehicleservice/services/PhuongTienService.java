@@ -156,6 +156,10 @@ public class PhuongTienService implements IPhuongTienService {
             throw new IllegalArgumentException("Biển số không được để trống");
         }
 
+        if (dto.getMaTaiXe() <= 0) {
+            throw new IllegalArgumentException("Mã tài xế phải lớn hơn 0");
+        }
+
         if (isBlank(dto.getLoaiXe())) {
             throw new IllegalArgumentException("Loại xe không được để trống");
         }
@@ -186,6 +190,13 @@ public class PhuongTienService implements IPhuongTienService {
                 throw new IllegalArgumentException("VIN không được để trống");
             }
             validateVin(dto.getVin());
+        }
+
+        if (dto.getMaTaiXe() != null) {
+            // Bổ sung bắt lỗi khi update
+            if (dto.getMaTaiXe() <= 0) {
+                throw new IllegalArgumentException("Mã tài xế phải lớn hơn 0");
+            }
         }
 
         if (dto.getBienSo() != null) {
