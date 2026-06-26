@@ -160,6 +160,10 @@ public class PhuongTienService implements IPhuongTienService {
             throw new IllegalArgumentException("Mã tài xế phải lớn hơn 0");
         }
 
+        if (dto.getMaPin() != null && dto.getMaPin() <= 0) {
+            throw new IllegalArgumentException("Mã Pin phải lớn hơn 0");
+        }
+
         if (isBlank(dto.getLoaiXe())) {
             throw new IllegalArgumentException("Loại xe không được để trống");
         }
