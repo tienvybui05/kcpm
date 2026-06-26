@@ -60,7 +60,7 @@ public class SecurityConfig {
 //                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 //                .authorizeHttpRequests(auth -> auth
 //                        .requestMatchers("/api/user-service/auth/**").permitAll() // Cho phép tất cả các endpoint auth
-////                        .requestMatchers("/api/user-service/public/**").permitAll()
+    ////                        .requestMatchers("/api/user-service/public/**").permitAll()
 //                        .anyRequest().authenticated()
 //                )
 //                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -73,9 +73,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/user-service/auth/**").permitAll()
-                                            // ✅ AI ĐƯỢC TRUY CẬP API TÀI XẾ
-                    // .requestMatchers("/api/user-service/taixe/**").permitAll()
-                                .requestMatchers("/api/user-service/fcm/**").permitAll()
+                        // ✅ AI ĐƯỢC TRUY CẬP API TÀI XẾ
+                        .requestMatchers("/api/user-service/taixe/**").permitAll()
+                        .requestMatchers("/api/user-service/fcm/**").permitAll()
 
 
                         .anyRequest().authenticated()
@@ -86,16 +86,16 @@ public class SecurityConfig {
     }
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000", "http://localhost:3001")); // Cho phép frontend
-    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-    configuration.setAllowedHeaders(Arrays.asList("*"));
-    configuration.setAllowCredentials(true); // QUAN TRỌNG: Cho phép gửi credentials
-    configuration.setMaxAge(3600L);
-    
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", configuration);
-    return source;
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000", "http://localhost:3001")); // Cho phép frontend
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true); // QUAN TRỌNG: Cho phép gửi credentials
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {

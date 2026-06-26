@@ -16,7 +16,9 @@ public class PhuongTienService implements IPhuongTienService {
     @Autowired
     private IPhuongTienRepository phuongTienRepository;
 
-    private static final String LICENSE_PLATE_REGEX = "^\\d{2}[A-Z]-\\d{4,5}$";
+    private static final String LICENSE_PLATE_REGEX = "^\\d{2}[A-Z]-?\\d{3,4}(\\.\\d{2,4}|\\d{1,4})$";
+
+    private static final String VIN_REGEX = "^[A-HJ-NPR-Z0-9a-hj-npr-z]{17}$";
 
     @Transactional
     @Override
@@ -39,7 +41,7 @@ public class PhuongTienService implements IPhuongTienService {
 
         // Theo test Postman: tạo xe chưa được gắn pin.
         // Muốn gắn pin thì dùng API /link-pin/{pinId}
-        v.setMaPin(null);
+        v.setMaPin(dto.getMaPin());
 
         return phuongTienRepository.save(v);
     }
@@ -147,12 +149,24 @@ public class PhuongTienService implements IPhuongTienService {
             throw new IllegalArgumentException("VIN không được để trống");
         }
 
+        // Thêm đoạn check VIN ở đây
+        validateVin(dto.getVin());
+
         if (isBlank(dto.getBienSo())) {
             throw new IllegalArgumentException("Biển số không được để trống");
         }
 
         if (isBlank(dto.getLoaiXe())) {
             throw new IllegalArgumentException("Loại xe không được để trống");
+        }
+
+        String loaiXeTrim = dto.getLoaiXe().trim();
+        if (loaiXeTrim.length() < 2) {
+            throw new IllegalArgumentException("Tên loại xe quá ngắn");
+        }
+
+        if (loaiXeTrim.length() > 50) {
+            throw new IllegalArgumentException("Tên loại xe không được vượt quá 50 ký tự");
         }
 
         if (dto.getMaTaiXe() == null) {
@@ -167,8 +181,11 @@ public class PhuongTienService implements IPhuongTienService {
             throw new IllegalArgumentException("Dữ liệu JSON không hợp lệ");
         }
 
-        if (dto.getVin() != null && isBlank(dto.getVin())) {
-            throw new IllegalArgumentException("VIN không được để trống");
+        if (dto.getVin() != null) {
+            if (isBlank(dto.getVin())) {
+                throw new IllegalArgumentException("VIN không được để trống");
+            }
+            validateVin(dto.getVin());
         }
 
         if (dto.getBienSo() != null) {
@@ -177,12 +194,48 @@ public class PhuongTienService implements IPhuongTienService {
             }
             validateLicensePlate(dto.getBienSo());
         }
+
+        if (dto.getLoaiXe() != null) {
+            if (dto.getLoaiXe().trim().isEmpty()) {
+                throw new IllegalArgumentException("Loại xe không được để trống");
+            }
+            if (dto.getLoaiXe().trim().length() < 2) {
+                throw new IllegalArgumentException("Tên loại xe quá ngắn");
+            }
+        }
+    }
+
+    // Viết thêm hàm helper validateVin này ở dưới cùng file Service
+    private void validateVin(String vin) {
+        String value = vin.trim();
+
+        // Check độ dài trước để ăn khớp với câu báo lỗi của Postman test
+        if (value.length() != 17) {
+            throw new IllegalArgumentException("Mã VIN phải có độ dài đúng 17 ký tự");
+        }
+
+        // Check ký tự hợp lệ (Không chứa I, O, Q)
+        if (!value.matches(VIN_REGEX)) {
+            throw new IllegalArgumentException("Mã VIN không đúng định dạng chuẩn quốc tế");
+        }
     }
 
     private void validateLicensePlate(String bienSo) {
+        if (bienSo == null || bienSo.trim().isEmpty()) {
+            throw new IllegalArgumentException("Biển số không được để trống");
+        }
+
         String value = bienSo.trim().toUpperCase();
 
-        if (!value.matches(LICENSE_PLATE_REGEX)) {
+        // 1. Kiểm tra giới hạn độ dài trước (7 - 12 ký tự) để pass đúng case lỗi độ dài
+        if (value.length() > 12) {
+            throw new IllegalArgumentException("Biển số vượt quá độ dài quy định");
+        }
+
+        // 2. Kiểm tra định dạng Regex (Lúc này Regex không cần cụm Lookahead độ dài nữa vì đã check ở trên)
+        // Regex tinh gọn lại:
+        String tinhGonRegex = "^\\d{2}[A-Z]-?\\d{3,4}(\\.\\d{2,4}|\\d{1,4})$";
+        if (!value.matches(tinhGonRegex)) {
             throw new IllegalArgumentException("Dữ liệu JSON sai định dạng hoặc biển số không hợp lệ");
         }
     }

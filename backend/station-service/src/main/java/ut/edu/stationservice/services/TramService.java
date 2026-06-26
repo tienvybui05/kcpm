@@ -41,16 +41,24 @@ public class TramService implements ITramService {
         if (tram.getKinhDo() == null) {
             throw new RuntimeException("kinh độ bị rỗng");
         }
-        if (tram.getKinhDo() < -180 || tram.getKinhDo() > 180) {
-            throw new RuntimeException("kinh độ vượt biên (>180)");
-        }
+        if (tram.getKinhDo() < -180) {
+    throw new RuntimeException("kinh độ vượt biên (<-180)");
+}
+
+if (tram.getKinhDo() > 180) {
+    throw new RuntimeException("kinh độ vượt biên (>180)");
+}
 
         if (tram.getViDo() == null) {
             throw new RuntimeException("Vĩ độ bị rỗng");
         }
-        if (tram.getViDo() < -90 || tram.getViDo() > 90) {
-            throw new RuntimeException("vĩ độ vượt biên (>90)");
-        }
+        if (tram.getViDo() < -90) {
+    throw new RuntimeException("vĩ độ vượt biên (<-90)");
+}
+
+if (tram.getViDo() > 90) {
+    throw new RuntimeException("vĩ độ vượt biên (>90)");
+}
 
         if (tram.getSoLuongPinToiDa() == null) {
             throw new RuntimeException("pin rỗng"); // Khớp với test [pin rỗng]
@@ -79,7 +87,14 @@ public class TramService implements ITramService {
         if (tram.getTrangThai() == null || tram.getTrangThai().trim().isEmpty()) {
             throw new RuntimeException("trạng thái rỗng");
         }
-
+        if (!tram.getTrangThai().equals("Hoạt động")
+        && !tram.getTrangThai().equals("Bảo trì")
+        && !tram.getTrangThai().equals("Tạm dừng")) {
+    throw new RuntimeException("trangThai sai dữ liệu");
+}
+if (tram.getSoLuongPinToiDa() > 200) {
+    throw new RuntimeException("số lượng pin tối đa > 200");
+}
         tram.setTenTram(tram.getTenTram().trim());
         return tramRepository.save(tram);
     }
@@ -115,17 +130,25 @@ public class TramService implements ITramService {
                     if (tram.getKinhDo() == null) {
                         throw new RuntimeException("kinh độ bị rỗng");
                     }
-                    if (tram.getKinhDo() < -180 || tram.getKinhDo() > 180) {
-                        throw new RuntimeException("kinh độ vượt biên (>180)");
-                    }
+                    if (tram.getKinhDo() < -180) {
+    throw new RuntimeException("kinh độ vượt biên (<-180)");
+}
+
+if (tram.getKinhDo() > 180) {
+    throw new RuntimeException("kinh độ vượt biên (>180)");
+}
 
                     // 4. Validate Vĩ độ
                     if (tram.getViDo() == null) {
                         throw new RuntimeException("vĩ độ bị rỗng");
                     }
-                    if (tram.getViDo() < -90 || tram.getViDo() > 90) {
-                        throw new RuntimeException("vĩ độ vượt biên (>90)");
-                    }
+                   if (tram.getViDo() < -90) {
+    throw new RuntimeException("vĩ độ vượt biên (<-90)");
+}
+
+if (tram.getViDo() > 90) {
+    throw new RuntimeException("vĩ độ vượt biên (>90)");
+}
 
                     if (tram.getSoLuongPinToiDa() == null) {
                         throw new RuntimeException("pin rỗng");
@@ -152,7 +175,14 @@ public class TramService implements ITramService {
                     if (tram.getTrangThai() == null || tram.getTrangThai().trim().isEmpty()) {
                         throw new RuntimeException("trạng thái rỗng");
                     }
-
+                    if (!tram.getTrangThai().equals("Hoạt động")
+        && !tram.getTrangThai().equals("Bảo trì")
+        && !tram.getTrangThai().equals("Tạm dừng")) {
+    throw new RuntimeException("trangThai sai dữ liệu");
+}
+if (tram.getSoLuongPinToiDa() > 200) {
+    throw new RuntimeException("số lượng pin tối đa > 200");
+}
                     existing.setTenTram(tram.getTenTram());
                     existing.setDiaChi(tram.getDiaChi());
                     existing.setKinhDo(tram.getKinhDo());

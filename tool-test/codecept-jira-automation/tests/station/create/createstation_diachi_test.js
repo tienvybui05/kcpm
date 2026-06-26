@@ -17,35 +17,35 @@ Before(async ({ I }) => {
   await openAddStationModal(I);
 });
 
-Scenario("TC_CREATESTATION - Địa chỉ hợp lệ min 1 ký tự", ({ I }) => {
-  fillNominalFormForDiaChi(I);
-  I.fillField('input[name="diaChi"]', generateString(1));
+Scenario("TC_CREATESTATION - [diaChi - Min-=0] Tạo trạm với diaChi = Rỗng", async ({ I }) => {
+  await fillNominalFormForDiaChi(I);
+  await fillFieldFast(I, 'input[name="diaChi"]', "");
+
+  I.click("Thêm Trạm", "form");
+
+  I.seeElement('input[name="diaChi"]:invalid');
+});
+
+Scenario("TC_CREATESTATION - [diaChi - Min=1] Tạo trạm với diaChi = 1 ký tự", async ({ I }) => {
+  await fillNominalFormForDiaChi(I);
+  await fillFieldFast(I, 'input[name="diaChi"]', generateString(1));
 
   I.click("Thêm Trạm", "form");
 
   waitAndSeePopup(I, "✅ Thêm trạm thành công!");
 });
 
-Scenario("TC_CREATESTATION - Địa chỉ hợp lệ min+ 2 ký tự", ({ I }) => {
-  fillNominalFormForDiaChi(I);
-  I.fillField('input[name="diaChi"]', generateString(2));
+Scenario("TC_CREATESTATION - [diaChi - Min+=2] Tạo trạm với diaChi = 2 ký tự", async ({ I }) => {
+  await fillNominalFormForDiaChi(I);
+  await fillFieldFast(I, 'input[name="diaChi"]', generateString(2));
 
   I.click("Thêm Trạm", "form");
 
   waitAndSeePopup(I, "✅ Thêm trạm thành công!");
 });
 
-Scenario("TC_CREATESTATION - Địa chỉ hợp lệ nom 125 ký tự", async ({ I }) => {
-  fillNominalFormForDiaChi(I);
-  await fillFieldFast(I, 'input[name="diaChi"]', generateString(125));
-
-  I.click("Thêm Trạm", "form");
-
-  waitAndSeePopup(I, "✅ Thêm trạm thành công!");
-});
-
-Scenario("TC_CREATESTATION - Địa chỉ hợp lệ max- 249 ký tự", async ({ I }) => {
-  fillNominalFormForDiaChi(I);
+Scenario("TC_CREATESTATION - [diaChi - Max-=249] Tạo trạm với diaChi = 249 ký tự", async ({ I }) => {
+  await fillNominalFormForDiaChi(I);
   await fillFieldFast(I, 'input[name="diaChi"]', generateString(249));
 
   I.click("Thêm Trạm", "form");
@@ -53,8 +53,8 @@ Scenario("TC_CREATESTATION - Địa chỉ hợp lệ max- 249 ký tự", async (
   waitAndSeePopup(I, "✅ Thêm trạm thành công!");
 });
 
-Scenario("TC_CREATESTATION - Địa chỉ hợp lệ max 250 ký tự", async ({ I }) => {
-  fillNominalFormForDiaChi(I);
+Scenario("TC_CREATESTATION - [diaChi - Max=250] Tạo trạm với diaChi = 250 ký tự", async ({ I }) => {
+  await fillNominalFormForDiaChi(I);
   await fillFieldFast(I, 'input[name="diaChi"]', generateString(250));
 
   I.click("Thêm Trạm", "form");
@@ -62,23 +62,21 @@ Scenario("TC_CREATESTATION - Địa chỉ hợp lệ max 250 ký tự", async ({
   waitAndSeePopup(I, "✅ Thêm trạm thành công!");
 });
 
-Scenario("TC_CREATESTATION - Không nhập địa chỉ", ({ I }) => {
-  fillNominalFormForDiaChi(I);
-  I.clearField('input[name="diaChi"]');
+Scenario("TC_CREATESTATION - [diaChi - Max+=251] Tạo trạm với diaChi = 251 ký tự", async ({ I }) => {
+  await fillNominalFormForDiaChi(I);
+  await fillFieldFast(I, 'input[name="diaChi"]', generateString(251));
+
+  I.click("Thêm Trạm", "form");
+
+  waitAndSeePopup(I, "❌ Địa chỉ lố 250 kí tự.");
+});
+
+Scenario("TC_CREATESTATION - [diaChi - Error=Null] Tạo trạm với diaChi = Null", async ({ I }) => {
+  await fillNominalFormForDiaChi(I);
+  // Giả lập UI cho null bằng cách không điền gì (chuỗi rỗng)
+  await fillFieldFast(I, 'input[name="diaChi"]', "");
 
   I.click("Thêm Trạm", "form");
 
   I.seeElement('input[name="diaChi"]:invalid');
 });
-
-Scenario(
-  "TC_CREATESTATION - Địa chỉ vượt quá giới hạn 250 ký tự",
-  async ({ I }) => {
-    fillNominalFormForDiaChi(I);
-    await fillFieldFast(I, 'input[name="diaChi"]', generateString(251));
-
-    I.click("Thêm Trạm", "form");
-
-    waitAndSeePopup(I, "❌ Địa chỉ lố 250 kí tự.");
-  },
-);

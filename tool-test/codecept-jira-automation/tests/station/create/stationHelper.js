@@ -22,12 +22,14 @@ function generateUniqueString(length) {
   return base + "A".repeat(length - base.length);
 }
 
+// KHÔI PHỤC: Đã trả lại thời gian chờ 1.5s cho popup như cũ
 function waitAndSeePopup(I, message) {
   I.wait(1.5);
   I.seeInPopup(message);
   I.acceptPopup();
 }
 
+// GIỮ LẠI: Hàm này giúp copy/paste 1 lèo chữ thay vì gõ từng phím
 async function fillFieldFast(I, selector, value) {
   await I.executeScript(
     ({ selector, value }) => {
@@ -51,11 +53,12 @@ async function fillFieldFast(I, selector, value) {
   );
 }
 
+// KHÔI PHỤC: Trả lại I.wait(3) ở hàm Login như cũ để tránh bị trôi quá nhanh
 async function loginOnce(I) {
   I.amOnPage("http://localhost:3000/login");
 
   I.fillField('input[name="phone"]', "0703735248");
-  I.fillField('input[name="password"]', "123456");
+  I.fillField('input[name="password"]', "0703735248Ngoc@");
   I.click('button[type="submit"]');
 
   I.wait(3);
@@ -75,6 +78,7 @@ async function loginOnce(I) {
   });
 }
 
+// KHÔI PHỤC: Trả lại cách load trang gốc của bạn
 async function openAddStationModal(I) {
   I.amOnPage("http://localhost:3000/dashboard/stations");
 
@@ -97,58 +101,69 @@ async function openAddStationModal(I) {
   I.waitForText("Thêm Trạm Mới", 5);
 }
 
-function fillNominalFormForTenTram(I) {
-  I.fillField('input[name="diaChi"]', "123 Đường Trung Tâm, Quận 1");
-  I.fillField('input[name="kinhDo"]', "106.6821");
-  I.fillField('input[name="viDo"]', "10.7626");
-  I.fillField('input[name="soLuongPinToiDa"]', "50");
-  I.fillField('input[name="soDT"]', generatePhone());
+// GIỮ LẠI: Vẫn dùng async/await với fillFieldFast để các trường điền 1 lèo
+async function fillNominalFormForTenTram(I) {
+  await fillFieldFast(I, 'input[name="diaChi"]', "123 Đường Trung Tâm, Quận 1");
+  await fillFieldFast(I, 'input[name="kinhDo"]', "106.6821");
+  await fillFieldFast(I, 'input[name="viDo"]', "10.7626");
+  await fillFieldFast(I, 'input[name="soLuongPinToiDa"]', "50");
+  await fillFieldFast(I, 'input[name="soDT"]', generatePhone());
   I.selectOption('select[name="trangThai"]', "Hoạt động");
 }
 
-function fillNominalFormForDiaChi(I) {
-  I.fillField('input[name="tenTram"]', generateUniqueString(30));
-  I.fillField('input[name="kinhDo"]', "106.6821");
-  I.fillField('input[name="viDo"]', "10.7626");
-  I.fillField('input[name="soLuongPinToiDa"]', "50");
-  I.fillField('input[name="soDT"]', generatePhone());
+async function fillNominalFormForDiaChi(I) {
+  await fillFieldFast(I, 'input[name="tenTram"]', generateUniqueString(30));
+  await fillFieldFast(I, 'input[name="kinhDo"]', "106.6821");
+  await fillFieldFast(I, 'input[name="viDo"]', "10.7626");
+  await fillFieldFast(I, 'input[name="soLuongPinToiDa"]', "50");
+  await fillFieldFast(I, 'input[name="soDT"]', generatePhone());
   I.selectOption('select[name="trangThai"]', "Hoạt động");
 }
 
-function fillNominalFormForKinhDo(I) {
-  I.fillField('input[name="tenTram"]', generateUniqueString(30));
-  I.fillField('input[name="diaChi"]', "123 Đường Trung Tâm, Quận 1");
-  I.fillField('input[name="viDo"]', "10.7626");
-  I.fillField('input[name="soLuongPinToiDa"]', "50");
-  I.fillField('input[name="soDT"]', generatePhone());
+async function fillNominalFormForKinhDo(I) {
+  await fillFieldFast(I, 'input[name="tenTram"]', generateUniqueString(30));
+  await fillFieldFast(I, 'input[name="diaChi"]', "123 Đường Trung Tâm, Quận 1");
+  await fillFieldFast(I, 'input[name="viDo"]', "10.7626");
+  await fillFieldFast(I, 'input[name="soLuongPinToiDa"]', "50");
+  await fillFieldFast(I, 'input[name="soDT"]', generatePhone());
   I.selectOption('select[name="trangThai"]', "Hoạt động");
 }
 
-function fillNominalFormForViDo(I) {
-  I.fillField('input[name="tenTram"]', generateUniqueString(30));
-  I.fillField('input[name="diaChi"]', "123 Đường Trung Tâm, Quận 1");
-  I.fillField('input[name="kinhDo"]', "106.6821");
-  I.fillField('input[name="soLuongPinToiDa"]', "50");
-  I.fillField('input[name="soDT"]', generatePhone());
+async function fillNominalFormForViDo(I) {
+  await fillFieldFast(I, 'input[name="tenTram"]', generateUniqueString(30));
+  await fillFieldFast(I, 'input[name="diaChi"]', "123 Đường Trung Tâm, Quận 1");
+  await fillFieldFast(I, 'input[name="kinhDo"]', "106.6821");
+  await fillFieldFast(I, 'input[name="soLuongPinToiDa"]', "50");
+  await fillFieldFast(I, 'input[name="soDT"]', generatePhone());
   I.selectOption('select[name="trangThai"]', "Hoạt động");
 }
 
-function fillNominalFormForSoDT(I) {
-  I.fillField('input[name="tenTram"]', generateUniqueString(30));
-  I.fillField('input[name="diaChi"]', "123 Đường Trung Tâm, Quận 1");
-  I.fillField('input[name="kinhDo"]', "106.6821");
-  I.fillField('input[name="viDo"]', "10.7626");
-  I.fillField('input[name="soLuongPinToiDa"]', "50");
+async function fillNominalFormForSoDT(I) {
+  await fillFieldFast(I, 'input[name="tenTram"]', generateUniqueString(30));
+  await fillFieldFast(I, 'input[name="diaChi"]', "123 Đường Trung Tâm, Quận 1");
+  await fillFieldFast(I, 'input[name="kinhDo"]', "106.6821");
+  await fillFieldFast(I, 'input[name="viDo"]', "10.7626");
+  await fillFieldFast(I, 'input[name="soLuongPinToiDa"]', "50");
   I.selectOption('select[name="trangThai"]', "Hoạt động");
 }
 
-function fillNominalFormForTrangThai(I) {
-  I.fillField('input[name="tenTram"]', generateUniqueString(30));
-  I.fillField('input[name="diaChi"]', "123 Đường Trung Tâm, Quận 1");
-  I.fillField('input[name="kinhDo"]', "106.6821");
-  I.fillField('input[name="viDo"]', "10.7626");
-  I.fillField('input[name="soLuongPinToiDa"]', "50");
-  I.fillField('input[name="soDT"]', generatePhone());
+async function fillNominalFormForTrangThai(I) {
+  await fillFieldFast(I, 'input[name="tenTram"]', generateUniqueString(30));
+  await fillFieldFast(I, 'input[name="diaChi"]', "123 Đường Trung Tâm, Quận 1");
+  await fillFieldFast(I, 'input[name="kinhDo"]', "106.6821");
+  await fillFieldFast(I, 'input[name="viDo"]', "10.7626");
+  await fillFieldFast(I, 'input[name="soLuongPinToiDa"]', "50");
+  await fillFieldFast(I, 'input[name="soDT"]', generatePhone());
+}
+
+async function fillNominalForm(I) {
+  await fillFieldFast(I, 'input[name="tenTram"]', generateUniqueString(30));
+  await fillFieldFast(I, 'input[name="diaChi"]', "123 Đường Trung Tâm, Quận 1");
+  await fillFieldFast(I, 'input[name="kinhDo"]', "106.6821");
+  await fillFieldFast(I, 'input[name="viDo"]', "10.7626");
+  await fillFieldFast(I, 'input[name="soLuongPinToiDa"]', "50");
+  await fillFieldFast(I, 'input[name="soDT"]', generatePhone());
+  I.selectOption('select[name="trangThai"]', "Hoạt động");
 }
 
 module.exports = {
@@ -165,4 +180,5 @@ module.exports = {
   fillNominalFormForViDo,
   fillNominalFormForSoDT,
   fillNominalFormForTrangThai,
+  fillNominalForm,
 };

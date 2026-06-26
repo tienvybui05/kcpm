@@ -41,6 +41,9 @@ public class GlobalExceptionHandler {
                 } else if ("viDo".equals(fieldName)) {
                     message = "Vĩ độ sai kiểu dữ liệu";
                 }
+                 else if ("soLuongPinToiDa".equals(fieldName)) {
+    message = "pin sai kiểu dữ liệu";
+}
             }
         }
 
