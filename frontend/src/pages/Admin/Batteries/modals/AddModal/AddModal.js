@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styles from "./AddModal.module.css";
 
-export default function AddModal({ open, onClose, onDone, context = "batteries", tramId = null }) {
+export default function AddModal({
+                                     open,
+                                     onClose,
+                                     onDone,
+                                     context = "batteries",
+                                     tramId = null,
+                                 }) {
     const [loading, setLoading] = useState(true);
     const [pins, setPins] = useState([]);
     const [stations, setStations] = useState([]);
@@ -75,7 +81,7 @@ export default function AddModal({ open, onClose, onDone, context = "batteries",
                 } else if (context === "station" && tramId) {
                     // Chỉ 1 trạm cụ thể
                     const found = tramData.find(
-                        (t) => Number(t.maTram ?? t.ma_tram) === Number(tramId)
+                        (t) => Number(t.maTram ?? t.ma_tram) === Number(tramId),
                     );
                     if (found) {
                         setStations([found]);
@@ -107,12 +113,14 @@ export default function AddModal({ open, onClose, onDone, context = "batteries",
         let msg = "";
         if (field === "newSucKhoe") {
             const v = Number(value);
-            if (isNaN(v) || v < 0 || v > 100) msg = "Giá trị sức khỏe phải trong khoảng 0–100%";
+            if (isNaN(v) || v < 0 || v > 100)
+                msg = "Giá trị sức khỏe phải trong khoảng 0–100%";
         }
         if ((field === "ngayNhapKho" || field === "ngayBaoDuongGanNhat") && value) {
             if (value > today) msg = "Không được chọn ngày trong tương lai";
         }
-        if (field === "loaiPin" && !value.trim()) msg = "Vui lòng nhập hoặc chọn model";
+        if (field === "loaiPin" && !value.trim())
+            msg = "Vui lòng nhập hoặc chọn model";
         if (field === "dungLuong" && (!value || value <= 0))
             msg = "Vui lòng nhập dung lượng hợp lệ";
         if (field === "maTram" && context === "batteries" && !value)
@@ -155,7 +163,7 @@ export default function AddModal({ open, onClose, onDone, context = "batteries",
 
         try {
             const tinhTrangMap = {
-                "đầy": "DAY",
+                đầy: "DAY",
                 "đang sạc": "DANG_SAC",
                 "bảo trì": "BAO_TRI",
             };
@@ -248,6 +256,7 @@ export default function AddModal({ open, onClose, onDone, context = "batteries",
                             <div className={styles.formRow}>
                                 <label>Model pin</label>
                                 <input
+                                    name="loaiPin"
                                     list="modelList"
                                     value={form.loaiPin}
                                     onChange={(e) => update("loaiPin", e.target.value)}
@@ -270,14 +279,13 @@ export default function AddModal({ open, onClose, onDone, context = "batteries",
                             <div className={styles.formRow}>
                                 <label>Dung lượng (kWh)</label>
                                 <input
+                                    name="dungLuong"
                                     type="number"
                                     value={form.dungLuong}
                                     onChange={(e) => update("dungLuong", e.target.value)}
                                     readOnly={!isNewModel}
                                     placeholder={
-                                        isNewModel
-                                            ? "Nhập dung lượng mới"
-                                            : "Tự động theo model"
+                                        isNewModel ? "Nhập dung lượng mới" : "Tự động theo model"
                                     }
                                     className={`${styles.input} ${
                                         errors.dungLuong ? styles.inputError : ""
@@ -293,6 +301,7 @@ export default function AddModal({ open, onClose, onDone, context = "batteries",
                                 <div className={styles.formRow}>
                                     <label>Tình trạng</label>
                                     <select
+                                        name="newTinhTrang"
                                         value={form.newTinhTrang}
                                         onChange={(e) => update("newTinhTrang", e.target.value)}
                                         className={styles.input}
@@ -307,6 +316,7 @@ export default function AddModal({ open, onClose, onDone, context = "batteries",
                                 <div className={styles.formRow}>
                                     <label>Trạng thái sở hữu</label>
                                     <select
+                                        name="trangThaiSoHuu"
                                         value={form.trangThaiSoHuu}
                                         onChange={(e) => update("trangThaiSoHuu", e.target.value)}
                                         className={styles.input}
@@ -324,6 +334,7 @@ export default function AddModal({ open, onClose, onDone, context = "batteries",
                             <div className={styles.formRow}>
                                 <label>% Sức khỏe</label>
                                 <input
+                                    name="newSucKhoe"
                                     type="number"
                                     value={form.newSucKhoe}
                                     onChange={(e) => update("newSucKhoe", e.target.value)}
@@ -333,9 +344,7 @@ export default function AddModal({ open, onClose, onDone, context = "batteries",
                                     }`}
                                 />
                                 {errors.newSucKhoe && (
-                                    <small className={styles.errorMsg}>
-                                        {errors.newSucKhoe}
-                                    </small>
+                                    <small className={styles.errorMsg}>{errors.newSucKhoe}</small>
                                 )}
                             </div>
 
@@ -344,6 +353,7 @@ export default function AddModal({ open, onClose, onDone, context = "batteries",
                                 <div className={styles.formRow}>
                                     <label>Ngày nhập kho</label>
                                     <input
+                                        name="ngayNhapKho"
                                         type="date"
                                         value={form.ngayNhapKho}
                                         onChange={(e) => update("ngayNhapKho", e.target.value)}
@@ -360,15 +370,14 @@ export default function AddModal({ open, onClose, onDone, context = "batteries",
                                 <div className={styles.formRow}>
                                     <label>Lần bảo dưỡng gần nhất</label>
                                     <input
+                                        name="ngayBaoDuongGanNhat"
                                         type="date"
                                         value={form.ngayBaoDuongGanNhat}
                                         onChange={(e) =>
                                             update("ngayBaoDuongGanNhat", e.target.value)
                                         }
                                         className={`${styles.input} ${
-                                            errors.ngayBaoDuongGanNhat
-                                                ? styles.inputError
-                                                : ""
+                                            errors.ngayBaoDuongGanNhat ? styles.inputError : ""
                                         }`}
                                     />
                                     {errors.ngayBaoDuongGanNhat && (
@@ -384,6 +393,7 @@ export default function AddModal({ open, onClose, onDone, context = "batteries",
                                 <div className={styles.formRow}>
                                     <label>Chọn trạm</label>
                                     <select
+                                        name="maTram"
                                         value={form.maTram}
                                         onChange={(e) => update("maTram", e.target.value)}
                                         className={`${styles.input} ${
@@ -420,6 +430,7 @@ export default function AddModal({ open, onClose, onDone, context = "batteries",
                             <div className={styles.formRow}>
                                 <label>Ghi chú lịch sử</label>
                                 <input
+                                    name="logNote"
                                     type="text"
                                     value={form.logNote}
                                     onChange={(e) => update("logNote", e.target.value)}
