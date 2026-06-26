@@ -1,0 +1,34 @@
+JIRA_BASE=https://caongoctanvo.atlassian.net
+EMAIL=tienvy27052005@gmail.com
+TOKEN=
+PROJECT_KEY=
+
+JIRA_SERVICE_ISSUE_TYPE=Epic
+JIRA_AUTOMATION_ISSUE_TYPE=Task
+JIRA_BUG_ISSUE_TYPE=Subbug
+
+POSTMAN_API_KEY=postman_api_key_cua_ban
+POSTMAN_COLLECTION_ID=collection_uid_cua_ban
+
+JIRA_MODE=local
+
+# /*Avatar / Settings
+# → API keys
+# → Generate API Key
+# → Copy key và dán vào đây
+# */
+
+API_URL=http://localhost:8080/api   
+WEB_URL=http://localhost:3000
+
+
+DRIVER_PHONE=0362567759
+DRIVER_PASSWORD=123456
+
+STAFF_PHONE=0362567758
+STAFF_PASSWORD=123456
+
+STAFF_EMAIL=staff@gmail.com
+
+ADMIN_PHONE=0362567759
+ADMIN_PASSWORD=123456
