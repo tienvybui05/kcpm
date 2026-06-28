@@ -5,15 +5,31 @@ const fillValidData = (I) => {
 
   I.fillField("Ho_Ten", "Nguyen Van A");
   I.fillField("Email", `test${timestamp}@gmail.com`);
-  I.fillField("Mat_Khau", "abc123");
-  I.fillField("Xac_Nhan_Mat_Khau", "abc123");
+  I.fillField("Mat_Khau", "Abc@123");
+  I.fillField("Xac_Nhan_Mat_Khau", "Abc@123");
   I.fillField("Ngay_sinh", "2000-01-01");
   I.fillField("Dia_Chi", "123 Đường ABC, Quận 1, TP.HCM");
-  I.fillField("Bang_Lai_Xe", `A1-${String(timestamp).slice(-6)}`);
+  I.fillField("Bang_Lai_Xe", "A1");
 };
 
+// soDienThoai - min-=9
 Scenario(
-  "TC_REGISTER - Nhập số điện thoại hợp lệ (10 số, bắt đầu bằng 0)",
+  "[soDienThoai - min-=9] Đăng ký với số điện thoại 9 chữ số",
+  async ({ I }) => {
+    I.amOnPage("/register");
+
+    fillValidData(I);
+    I.fillField("Sdt", "098765432");
+
+    I.click("Đăng ký tài xế");
+
+    I.see("Số điện thoại phải đúng 10 chữ số");
+  },
+);
+
+// soDienThoai - min=10
+Scenario(
+  "[soDienThoai - min=10] Đăng ký với số điện thoại 10 chữ số",
   async ({ I }) => {
     I.amOnPage("/register");
 
@@ -26,81 +42,77 @@ Scenario(
   },
 );
 
-Scenario("TC_REGISTER - Số điện thoại không bắt đầu bằng 0", async ({ I }) => {
-  I.amOnPage("/register");
+// soDienThoai - min+=11
+Scenario(
+  "[soDienThoai - min+=11] Đăng ký với số điện thoại 11 chữ số",
+  async ({ I }) => {
+    I.amOnPage("/register");
 
-  fillValidData(I);
-  I.fillField("Sdt", "1234567890");
+    fillValidData(I);
+    I.fillField("Sdt", "09876543210");
 
-  I.click("Đăng ký tài xế");
+    I.click("Đăng ký tài xế");
 
-  I.see("Số điện thoại không hợp lệ");
-});
+    I.see("Số điện thoại phải đúng 10 chữ số");
+  },
+);
 
-Scenario("TC_REGISTER - Số điện thoại chứa ký tự chữ", async ({ I }) => {
-  I.amOnPage("/register");
+// soDienThoai - max+=12
+Scenario(
+  "[soDienThoai - max+=12] Đăng ký với số điện thoại 12 chữ số",
+  async ({ I }) => {
+    I.amOnPage("/register");
 
-  fillValidData(I);
-  I.fillField("Sdt", "09abc54321");
+    fillValidData(I);
+    I.fillField("Sdt", "098765432101");
 
-  I.click("Đăng ký tài xế");
+    I.click("Đăng ký tài xế");
 
-  I.see("Số điện thoại không hợp lệ");
-});
+    I.see("Số điện thoại phải đúng 10 chữ số");
+  },
+);
 
-// Boundary Value Analysis
+// soDienThoai - invalid
+Scenario(
+  "[soDienThoai - invalid] Đăng ký với số điện thoại bắt đầu bằng 1",
+  async ({ I }) => {
+    I.amOnPage("/register");
 
-Scenario("TC_REGISTER - Boundary Min- (9 chữ số)", async ({ I }) => {
-  I.amOnPage("/register");
+    fillValidData(I);
+    I.fillField("Sdt", "1987654321");
 
-  fillValidData(I);
-  I.fillField("Sdt", "123456789");
+    I.click("Đăng ký tài xế");
 
-  I.click("Đăng ký tài xế");
+    I.see("Số điện thoại phải bắt đầu bằng 0");
+  },
+);
 
-  I.see("Số điện thoại không hợp lệ");
-});
+// soDienThoai - invalid
+Scenario(
+  "[soDienThoai - invalid] Đăng ký với số điện thoại chứa chữ cái",
+  async ({ I }) => {
+    I.amOnPage("/register");
 
-Scenario("TC_REGISTER - Boundary Min (10 chữ số)", async ({ I }) => {
-  I.amOnPage("/register");
+    fillValidData(I);
+    I.fillField("Sdt", "09876543ab");
 
-  fillValidData(I);
-  I.fillField("Sdt", "0123456789");
+    I.click("Đăng ký tài xế");
 
-  I.click("Đăng ký tài xế");
+    I.see("Số điện thoại chỉ được chứa chữ số");
+  },
+);
 
-  I.waitForURL(/\/login$/, 30);
-});
+// soDienThoai - invalid
+Scenario(
+  "[soDienThoai - invalid] Đăng ký với số điện thoại rỗng",
+  async ({ I }) => {
+    I.amOnPage("/register");
 
-Scenario("TC_REGISTER - Boundary Nom (10 chữ số)", async ({ I }) => {
-  I.amOnPage("/register");
+    fillValidData(I);
+    I.fillField("Sdt", "");
 
-  fillValidData(I);
-  I.fillField("Sdt", "0981234567");
+    I.click("Đăng ký tài xế");
 
-  I.click("Đăng ký tài xế");
-
-  I.waitForURL(/\/login$/, 30);
-});
-
-Scenario("TC_REGISTER - Boundary Max (10 chữ số)", async ({ I }) => {
-  I.amOnPage("/register");
-
-  fillValidData(I);
-  I.fillField("Sdt", "0999999999");
-
-  I.click("Đăng ký tài xế");
-
-  I.waitForURL(/\/login$/, 30);
-});
-
-Scenario("TC_REGISTER - Boundary Max+ (11 chữ số)", async ({ I }) => {
-  I.amOnPage("/register");
-
-  fillValidData(I);
-  I.fillField("Sdt", "01234567890");
-
-  I.click("Đăng ký tài xế");
-
-  I.see("Số điện thoại không hợp lệ");
-});
+    I.see("người dùng chưa cung cấp số điện thoại");
+  },
+);

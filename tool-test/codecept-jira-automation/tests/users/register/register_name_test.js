@@ -5,64 +5,51 @@ const fillValidData = (I) => {
 
   I.fillField("Email", `test${timestamp}@gmail.com`);
   I.fillField("Sdt", `09${timestamp.toString().slice(-8)}`);
-  I.fillField("Mat_Khau", "abc123");
-  I.fillField("Xac_Nhan_Mat_Khau", "abc123");
+  I.fillField("Mat_Khau", "Abc@123");
+  I.fillField("Xac_Nhan_Mat_Khau", "Abc@123");
   I.fillField("Ngay_sinh", "2000-01-01");
   I.fillField("Dia_Chi", "123 Đường ABC, Quận 1, TP.HCM");
-  I.fillField("Bang_Lai_Xe", `A1-${timestamp.toString().slice(-6)}`);
+  I.fillField("Bang_Lai_Xe", `A1`);
 };
 
-// Nominal
-Scenario("TC_REGISTER - Nhập họ tên hợp lệ (10 ký tự)", async ({ I }) => {
+//
+// hoTen - min- = 0
+//
+Scenario("[hoTen - min-=0] Đăng ký với họ tên rỗng", ({ I }) => {
   I.amOnPage("/register");
 
   fillValidData(I);
-  I.fillField("Ho_Ten", "Nguyen Van A");
+
+  I.fillField("Ho_Ten", "");
+
+  I.click("Đăng ký tài xế");
+
+  I.see("Họ tên không được để trống");
+});
+
+//
+// hoTen - min = 1
+//
+Scenario("[hoTen - min=1] Đăng ký với họ tên 1 ký tự", ({ I }) => {
+  I.amOnPage("/register");
+
+  fillValidData(I);
+
+  I.fillField("Ho_Ten", "T");
 
   I.click("Đăng ký tài xế");
 
   I.waitForURL(/\/login$/, 30);
 });
 
-// Invalid
-Scenario("TC_REGISTER - Nhập họ tên 1 ký tự", async ({ I }) => {
+//
+// hoTen - min+ = 2
+//
+Scenario("[hoTen - min+=2] Đăng ký với họ tên 2 ký tự", ({ I }) => {
   I.amOnPage("/register");
 
   fillValidData(I);
-  I.fillField("Ho_Ten", "A");
 
-  I.click("Đăng ký tài xế");
-
-  I.see("Họ tên phải ≥2 ký tự");
-});
-
-Scenario("TC_REGISTER - Nhập họ tên 65 ký tự", async ({ I }) => {
-  I.amOnPage("/register");
-
-  fillValidData(I);
-  I.fillField("Ho_Ten", "A".repeat(65));
-
-  I.click("Đăng ký tài xế");
-
-  I.see("Họ tên ≤64 ký tự");
-});
-
-Scenario("TC_REGISTER - Nhập họ tên có ký tự đặc biệt", async ({ I }) => {
-  I.amOnPage("/register");
-
-  fillValidData(I);
-  I.fillField("Ho_Ten", "Nguyen@Van");
-
-  I.click("Đăng ký tài xế");
-
-  I.see("Ký tự không hợp lệ");
-});
-
-// Boundary Min
-Scenario("TC_REGISTER - Boundary Min (2 ký tự)", async ({ I }) => {
-  I.amOnPage("/register");
-
-  fillValidData(I);
   I.fillField("Ho_Ten", "AB");
 
   I.click("Đăng ký tài xế");
@@ -70,50 +57,95 @@ Scenario("TC_REGISTER - Boundary Min (2 ký tự)", async ({ I }) => {
   I.waitForURL(/\/login$/, 30);
 });
 
-// Boundary Min+
-Scenario("TC_REGISTER - Boundary Min+ (3 ký tự)", async ({ I }) => {
+//
+// hoTen - nominal
+//
+Scenario("[hoTen - nominal] Đăng ký với họ tên hợp lệ", ({ I }) => {
   I.amOnPage("/register");
 
   fillValidData(I);
-  I.fillField("Ho_Ten", "ABC");
+
+  I.fillField("Ho_Ten", "Nguyen Van A");
 
   I.click("Đăng ký tài xế");
 
   I.waitForURL(/\/login$/, 30);
 });
 
-// Boundary Nominal
-Scenario("TC_REGISTER - Boundary Nominal (33 ký tự)", async ({ I }) => {
+//
+// hoTen - max- = 49
+//
+Scenario("[hoTen - max-=49] Đăng ký với họ tên 49 ký tự", ({ I }) => {
   I.amOnPage("/register");
 
   fillValidData(I);
-  I.fillField("Ho_Ten", "A".repeat(33));
+
+  I.fillField("Ho_Ten", "A".repeat(49));
 
   I.click("Đăng ký tài xế");
 
   I.waitForURL(/\/login$/, 30);
 });
 
-// Boundary Max-
-Scenario("TC_REGISTER - Boundary Max- (63 ký tự)", async ({ I }) => {
+//
+// hoTen - max = 50
+//
+Scenario("[hoTen - max=50] Đăng ký với họ tên 50 ký tự", ({ I }) => {
   I.amOnPage("/register");
 
   fillValidData(I);
-  I.fillField("Ho_Ten", "A".repeat(63));
+
+  I.fillField("Ho_Ten", "A".repeat(50));
 
   I.click("Đăng ký tài xế");
 
   I.waitForURL(/\/login$/, 30);
 });
 
-// Boundary Max
-Scenario("TC_REGISTER - Boundary Max (64 ký tự)", async ({ I }) => {
+//
+// hoTen - max+ = 51
+//
+Scenario("[hoTen - max+=51] Đăng ký với họ tên 51 ký tự", ({ I }) => {
   I.amOnPage("/register");
 
   fillValidData(I);
-  I.fillField("Ho_Ten", "A".repeat(64));
+
+  I.fillField("Ho_Ten", "A".repeat(51));
 
   I.click("Đăng ký tài xế");
 
-  I.waitForURL(/\/login$/, 30);
+  I.see("Họ tên phải từ 1-50 ký tự");
 });
+
+//
+// hoTen - invalid number
+//
+Scenario("[hoTen - invalid] Đăng ký với họ tên chứa số", ({ I }) => {
+  I.amOnPage("/register");
+
+  fillValidData(I);
+
+  I.fillField("Ho_Ten", "Nguyen Van A1");
+
+  I.click("Đăng ký tài xế");
+
+  I.see("Họ tên chỉ được chứa chữ cái");
+});
+
+//
+// hoTen - invalid special character
+//
+Scenario(
+  "[hoTen - invalid] Đăng ký với họ tên chứa ký tự đặc biệt",
+  ({ I }) => {
+    I.amOnPage("/register");
+
+    fillValidData(I);
+
+    I.fillField("Ho_Ten", "Nguyen@Van");
+
+    I.click("Đăng ký tài xế");
+
+    I.see("Họ tên chỉ được chứa chữ cái");
+  },
+);
