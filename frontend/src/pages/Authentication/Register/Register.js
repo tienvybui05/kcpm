@@ -54,17 +54,14 @@ const Register = () => {
             // === Fix bug validate hoten : KIỂM TRA HỌ TÊN ===
             const hoTenValue = formData.Ho_Ten.trim();
 
-            // 0. Kiểm tra rỗng
             if (hoTenValue.length === 0) {
                 throw new Error("Họ tên không được để trống");
             }
 
-            // 1. Kiểm tra họ tên phải <= 50 ký tự
             if (hoTenValue.length > 50) {
                 throw new Error("Họ tên phải từ 1-50 ký tự");
             }
 
-            // 2. Kiểm tra ký tự đặc biệt (Chỉ cho phép chữ cái Tiếng Việt, Tiếng Anh và khoảng trắng)
             const vnmeseNameRegex = /^[\p{L}\s]+$/u;
             if (!vnmeseNameRegex.test(hoTenValue)) {
                 throw new Error("Họ tên chỉ được chứa chữ cái");
@@ -74,17 +71,14 @@ const Register = () => {
             // === KIỂM TRA EMAIL ===
             const emailValue = formData.Email.trim();
 
-            // 1. Kiểm tra rỗng
             if (emailValue.length === 0) {
                 throw new Error("Đăng ký tài xế thất bại: Người dùng chưa cung cấp email");
             }
 
-            // 2. Kiểm tra độ dài tối đa 254 ký tự
             if (emailValue.length > 254) {
                 throw new Error("Email vượt quá độ dài cho phép (tối đa 254 ký tự)");
             }
 
-            // 3. Kiểm tra định dạng email
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(emailValue)) {
                 throw new Error("Email không đúng định dạng");
@@ -94,22 +88,18 @@ const Register = () => {
             // === KIỂM TRA SỐ ĐIỆN THOẠI ===
             const sdtValue = formData.Sdt.trim();
 
-            // 1. Kiểm tra rỗng
             if (sdtValue.length === 0) {
                 throw new Error("người dùng chưa cung cấp số điện thoại");
             }
 
-            // 2. Kiểm tra chỉ chứa chữ số
             if (!/^\d+$/.test(sdtValue)) {
                 throw new Error("Số điện thoại chỉ được chứa chữ số");
             }
 
-            // 3. Kiểm tra độ dài đúng 10
             if (sdtValue.length !== 10) {
                 throw new Error("Số điện thoại phải đúng 10 chữ số");
             }
 
-            // 4. Kiểm tra bắt đầu bằng 0
             if (!sdtValue.startsWith("0")) {
                 throw new Error("Số điện thoại phải bắt đầu bằng 0");
             }
@@ -125,14 +115,28 @@ const Register = () => {
                 throw new Error("Mật khẩu và xác nhận mật khẩu không khớp!");
             }
 
-            // KIỂM TRA ĐỦ TUỔI LÁI XE
-            if (!kiemTraDuTuoi(formData.Ngay_sinh)) {
-                throw new Error("Bạn phải đủ 18 tuổi trở lên để đăng ký lái xe!");
+            // === KIỂM TRA NGÀY SINH ===
+            const ngaySinhValue = formData.Ngay_sinh;
+            if (!ngaySinhValue) {
+                throw new Error("Vui lòng nhập ngày sinh");
             }
+
+            const today = new Date();
+            const birthDate = new Date(ngaySinhValue);
+
+            // Kiểm tra ngày sinh trong tương lai
+            if (birthDate > today) {
+                throw new Error("Ngày sinh không được là ngày trong tương lai");
+            }
+
+            // Kiểm tra đủ 18 tuổi
+            if (!kiemTraDuTuoi(ngaySinhValue)) {
+                throw new Error("Tài xế phải từ 18 tuổi trở lên");
+            }
+            // ===================================
 
             console.log("Đang gọi API đăng ký tài xế...");
 
-            // CHUẨN HÓA DATA THEO ENDPOINT register-tai-xe
             const registerData = {
                 hoTen: formData.Ho_Ten,
                 email: formData.Email,
@@ -144,7 +148,6 @@ const Register = () => {
                 bangLaiXe: formData.Bang_Lai_Xe,
             };
 
-            // GỌI API ĐĂNG KÝ
             const res = await fetch("/api/user-service/auth/register-tai-xe", {
                 method: "POST",
                 headers: {
@@ -163,7 +166,6 @@ const Register = () => {
             const data = await res.json();
             console.log("Register success:", data);
 
-            // ĐĂNG KÝ THÀNH CÔNG - CHUYỂN SANG LOGIN
             setLoading(false);
             alert("Đăng ký tài xế thành công! Chuyển đến trang đăng nhập...");
             navigate("/login");
@@ -306,7 +308,6 @@ const Register = () => {
                     <input type="hidden" name="Vai_Tro" value="TAIXE" />
                 </div>
 
-                {/* HIỂN THỊ LỖI Ở ĐÂY - DƯỚI CÙNG TRƯỚC NÚT ĐĂNG KÝ */}
                 {error && <div className={styles.error}>{error}</div>}
 
                 <button
