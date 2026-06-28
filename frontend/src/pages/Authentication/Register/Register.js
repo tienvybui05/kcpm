@@ -70,6 +70,27 @@ const Register = () => {
                 throw new Error("Họ tên chỉ được chứa chữ cái");
             }
             // ===================================
+
+            // === KIỂM TRA EMAIL ===
+            const emailValue = formData.Email.trim();
+
+            // 1. Kiểm tra rỗng
+            if (emailValue.length === 0) {
+                throw new Error("Đăng ký tài xế thất bại: Người dùng chưa cung cấp email");
+            }
+
+            // 2. Kiểm tra độ dài tối đa 254 ký tự
+            if (emailValue.length > 254) {
+                throw new Error("Email vượt quá độ dài cho phép (tối đa 254 ký tự)");
+            }
+
+            // 3. Kiểm tra định dạng email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailValue)) {
+                throw new Error("Email không đúng định dạng");
+            }
+            // ===================================
+
             // KIỂM TRA MẬT KHẨU TỐI THIỂU 6 KÝ TỰ
             if (formData.Mat_Khau.length < 6) {
                 throw new Error("Mật khẩu phải có ít nhất 6 ký tự!");
@@ -133,7 +154,7 @@ const Register = () => {
     return (
         <div className={styles.wrapper}>
             <h2 className={styles.title}>Đăng ký tài xế</h2>
-            <form onSubmit={handleSubmit} className={styles.form}>
+            <form onSubmit={handleSubmit} className={styles.form} noValidate>
 
                 <div className={styles.inputuser}>
                     <div className={styles.formGroup}>
@@ -156,7 +177,6 @@ const Register = () => {
                             name="Email"
                             value={formData.Email}
                             onChange={handleChange}
-                            required
                             className={styles.input}
                             disabled={loading}
                             placeholder="example@email.com"
