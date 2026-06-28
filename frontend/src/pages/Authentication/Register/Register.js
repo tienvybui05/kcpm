@@ -91,6 +91,30 @@ const Register = () => {
             }
             // ===================================
 
+            // === KIỂM TRA SỐ ĐIỆN THOẠI ===
+            const sdtValue = formData.Sdt.trim();
+
+            // 1. Kiểm tra rỗng
+            if (sdtValue.length === 0) {
+                throw new Error("người dùng chưa cung cấp số điện thoại");
+            }
+
+            // 2. Kiểm tra chỉ chứa chữ số
+            if (!/^\d+$/.test(sdtValue)) {
+                throw new Error("Số điện thoại chỉ được chứa chữ số");
+            }
+
+            // 3. Kiểm tra độ dài đúng 10
+            if (sdtValue.length !== 10) {
+                throw new Error("Số điện thoại phải đúng 10 chữ số");
+            }
+
+            // 4. Kiểm tra bắt đầu bằng 0
+            if (!sdtValue.startsWith("0")) {
+                throw new Error("Số điện thoại phải bắt đầu bằng 0");
+            }
+            // ===================================
+
             // KIỂM TRA MẬT KHẨU TỐI THIỂU 6 KÝ TỰ
             if (formData.Mat_Khau.length < 6) {
                 throw new Error("Mật khẩu phải có ít nhất 6 ký tự!");
@@ -190,7 +214,6 @@ const Register = () => {
                             name="Sdt"
                             value={formData.Sdt}
                             onChange={handleChange}
-                            required
                             className={styles.input}
                             disabled={loading}
                             placeholder="0987654321"
