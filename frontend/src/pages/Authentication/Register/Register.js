@@ -105,13 +105,27 @@ const Register = () => {
             }
             // ===================================
 
-            // KIỂM TRA MẬT KHẨU TỐI THIỂU 6 KÝ TỰ
-            if (formData.Mat_Khau.length < 6) {
-                throw new Error("Mật khẩu phải có ít nhất 6 ký tự!");
+            // Kiem tra mat khau: 6-20 ky tu, co chu hoa, chu thuong va chu so
+            const passwordValue = formData.Mat_Khau;
+
+            if (passwordValue.length < 6 || passwordValue.length > 20) {
+                throw new Error("M\u1eadt kh\u1ea9u ph\u1ea3i t\u1eeb 6-20 k\u00fd t\u1ef1");
+            }
+
+            if (!/[A-Z]/.test(passwordValue)) {
+                throw new Error("M\u1eadt kh\u1ea9u ph\u1ea3i ch\u1ee9a \u00edt nh\u1ea5t 1 ch\u1eef hoa");
+            }
+
+            if (!/[a-z]/.test(passwordValue)) {
+                throw new Error("M\u1eadt kh\u1ea9u ph\u1ea3i ch\u1ee9a \u00edt nh\u1ea5t 1 ch\u1eef th\u01b0\u1eddng");
+            }
+
+            if (!/\d/.test(passwordValue)) {
+                throw new Error("M\u1eadt kh\u1ea9u ph\u1ea3i ch\u1ee9a \u00edt nh\u1ea5t 1 ch\u1eef s\u1ed1");
             }
 
             // KIỂM TRA XÁC NHẬN MẬT KHẨU
-            if (formData.Mat_Khau !== formData.Xac_Nhan_Mat_Khau) {
+            if (passwordValue !== formData.Xac_Nhan_Mat_Khau) {
                 throw new Error("Mật khẩu và xác nhận mật khẩu không khớp!");
             }
 
