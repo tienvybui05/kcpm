@@ -1,7 +1,6 @@
 package datdq0317.edu.ut.vn.dinhquocdat.subscriptionservice.auth;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +22,19 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String method = request.getMethod();
+        String path = request.getServletPath();
+
+        boolean isGoiDichVuPath = path.equals("/api/subscription-service/goidichvu")
+                || path.startsWith("/api/subscription-service/goidichvu/")
+                || path.equals("/subscription-service/goidichvu")
+                || path.startsWith("/subscription-service/goidichvu/");
+
+        return isGoiDichVuPath && ("GET".equals(method) || "POST".equals(method));
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
