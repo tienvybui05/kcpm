@@ -64,7 +64,7 @@ public class LichSuDangKyGoiController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> xoa(@PathVariable Long id) {
         boolean deleted = lichSuDangKyGoiService.xoaDangKyGoi(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.badRequest().build();
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
     @GetMapping("/taixe/{maTaiXe}/kiemtra")
     public ResponseEntity<Map<String, Boolean>> kiemTraGoiConHan(@PathVariable Long maTaiXe) {
