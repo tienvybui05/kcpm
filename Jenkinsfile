@@ -22,7 +22,8 @@ pipeline {
         EMAIL                   = 'caongoctanvo@gmail.com'
         TOKEN                   = credentials('JIRA_API_TOKEN')
         PROJECT_KEY             = 'TAP'
-        JIRA_MODE               = 'jira' // Bật mode đẩy bug UI lên Jira
+        JIRA_MODE               = 'jira'
+        HEADLESS                = 'true'
     }
 
     triggers {
