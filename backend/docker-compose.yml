@@ -424,12 +424,13 @@ services:
   jenkins:
     image: jenkins/jenkins:lts-jdk17
     container_name: jenkins_server
-    user: root # Bắt buộc chạy quyền root để Jenkins có thể tự động cài các tool bên trong
+    user: root # Bắt buộc chạy quyền root để cài tool
     ports:
-      - "8090:8080" # Bẻ cổng ra ngoài là 8090 để không đụng với gateway
+      - "8090:8080" # Jenkins chạy ở cổng 8090
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - evnet
     restart: unless-stopped
