@@ -24,6 +24,9 @@ pipeline {
         PROJECT_KEY             = 'TAP'
         JIRA_MODE               = 'jira'
         HEADLESS                = 'true'
+
+        WEB_URL                 = 'http://host.docker.internal:3000'
+        API_URL                 = 'http://gateway:8080'
     }
 
     triggers {
