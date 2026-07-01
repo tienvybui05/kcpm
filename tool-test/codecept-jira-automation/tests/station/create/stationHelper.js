@@ -56,7 +56,8 @@ async function fillFieldFast(I, selector, value) {
 // KHÔI PHỤC: Trả lại I.wait(3) ở hàm Login như cũ để tránh bị trôi quá nhanh
 async function loginOnce(I) {
   I.amOnPage("/login");
-  I.waitForElement('input[name="phone"]', 10);
+  I.wait(3);
+  I.saveScreenshot("man_hinh_jenkins_nhin_thay.png");
 
   I.fillField('input[name="phone"]', "0703735248");
   I.fillField('input[name="password"]', "0703735248Ngoc@");
