@@ -80,7 +80,7 @@ pipeline {
                             if (pattern == "ALL") {
                                 sh 'node run.js --mode=jira'
                             } else {
-                                sh "node run.js --mode=jira --file=${pattern} --workers=4"
+                                sh "node run.js --mode=jira --file=${pattern} --workers=1"
                             }
                         }
                     }

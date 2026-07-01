@@ -47,4 +47,4 @@ const result = spawnSync("npx", commandArgs, {
 
 console.log("🏁 CodeceptJS finished.");
 
-process.exit(result.status || 0);
+process.exit(result.status != null ? result.status : 1);
