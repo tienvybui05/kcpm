@@ -55,7 +55,7 @@ async function fillFieldFast(I, selector, value) {
 
 // KHÔI PHỤC: Trả lại I.wait(3) ở hàm Login như cũ để tránh bị trôi quá nhanh
 async function loginOnce(I) {
-  I.amOnPage("http://localhost:3000/login");
+  I.amOnPage("/login");
 
   I.fillField('input[name="phone"]', "0703735248");
   I.fillField('input[name="password"]', "0703735248Ngoc@");
@@ -80,7 +80,7 @@ async function loginOnce(I) {
 
 // KHÔI PHỤC: Trả lại cách load trang gốc của bạn
 async function openAddStationModal(I) {
-  I.amOnPage("http://localhost:3000/dashboard/stations");
+  I.amOnPage("/dashboard/stations");
 
   const currentUrl = await I.grabCurrentUrl();
 
@@ -93,7 +93,7 @@ async function openAddStationModal(I) {
       localStorage.setItem("hoTen", storage.hoTen);
     }, authStorage);
 
-    I.amOnPage("http://localhost:3000/dashboard/stations");
+    I.amOnPage("/dashboard/stations");
   }
 
   I.waitForText("Quản Lý Trạm", 15);
