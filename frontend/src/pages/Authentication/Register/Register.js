@@ -149,6 +149,16 @@ const Register = () => {
             }
             // ===================================
 
+            const bangLaiXeValue = formData.Bang_Lai_Xe.trim();
+
+            if (bangLaiXeValue.length === 0) {
+                throw new Error("B\u1eb1ng l\u00e1i xe kh\u00f4ng \u0111\u01b0\u1ee3c \u0111\u1ec3 tr\u1ed1ng");
+            }
+
+            if (!/^[A-Za-z0-9-]+$/.test(bangLaiXeValue)) {
+                throw new Error("B\u1eb1ng l\u00e1i xe kh\u00f4ng h\u1ee3p l\u1ec7");
+            }
+
             console.log("Đang gọi API đăng ký tài xế...");
 
             const registerData = {
@@ -159,7 +169,7 @@ const Register = () => {
                 matKhau: formData.Mat_Khau,
                 ngaySinh: formData.Ngay_sinh,
                 diaChi: formData.Dia_Chi,
-                bangLaiXe: formData.Bang_Lai_Xe,
+                bangLaiXe: bangLaiXeValue,
             };
 
             const res = await fetch("/api/user-service/auth/register-tai-xe", {
