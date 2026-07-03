@@ -12,11 +12,15 @@ import org.springframework.http.HttpMethod;
 @Service
 public class AdminTokenService {
 
+    private RestTemplate restTemplate = new RestTemplate();
+
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
    public List<String> layTokenAdmin() {
     try {
         String url = "http://gateway:8080/api/user-service/fcm/admin";
-
-        RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<List<String>> response =
                 restTemplate.exchange(
@@ -42,7 +46,6 @@ public class AdminTokenService {
         try {
             String url = "http://gateway:8080/api/user-service/fcm/" + maTaiXe;
 
-            RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<List> response =
                 restTemplate.getForEntity(url, List.class);
 

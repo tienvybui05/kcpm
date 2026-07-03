@@ -19,8 +19,13 @@ public class FirebaseNotificationService {
     private static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
     private static final String SERVER_KEY = "AAAA..."; // 🔑 Lấy từ Firebase Console > Cloud Messaging
 
+    private OkHttpClient client = new OkHttpClient();
+
+    public void setOkHttpClient(OkHttpClient client) {
+        this.client = client;
+    }
+
     private void send(String to, String title, String body) {
-        OkHttpClient client = new OkHttpClient();
 
         JSONObject notification = new JSONObject();
         notification.put("title", title);
