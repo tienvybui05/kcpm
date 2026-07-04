@@ -28,6 +28,25 @@ const Register = () => {
         });
     };
 
+    // Hàm kiểm tra lỗi mật khẩu realtime
+    const getPasswordErrors = (password) => {
+        const errors = [];
+        if (password.length === 0) return errors;
+        if (password.length < 6 || password.length > 20) {
+            errors.push("Mật khẩu phải từ 6-20 ký tự");
+        }
+        if (!/[A-Z]/.test(password)) {
+            errors.push("Mật khẩu phải chứa ít nhất 1 chữ hoa");
+        }
+        if (!/[a-z]/.test(password)) {
+            errors.push("Mật khẩu phải chứa ít nhất 1 chữ thường");
+        }
+        if (!/\d/.test(password)) {
+            errors.push("Mật khẩu phải chứa ít nhất 1 chữ số");
+        }
+        return errors;
+    };
+
     // HÀM KIỂM TRA ĐỦ TUỔI LÁI XE (>= 18 TUỔI)
     const kiemTraDuTuoi = (ngaySinh) => {
         if (!ngaySinh) return true;
@@ -272,6 +291,9 @@ const Register = () => {
                             disabled={loading}
                             placeholder="Ít nhất 6 ký tự"
                         />
+                        {getPasswordErrors(formData.Mat_Khau).map((err, idx) => (
+                            <span key={idx} className={styles.errorText}>{err}</span>
+                        ))}
                     </div>
 
                     <div className={styles.formGroup}>

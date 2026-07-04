@@ -216,4 +216,22 @@ class GoiDichVuServiceTest {
         Mockito.when(goiDichVuRepository.findById(99L)).thenReturn(Optional.empty());
         assertNull(goiDichVuService.layGoiTheoId(99L));
     }
+
+    @Test
+    void TC_GOI_023_ThemGoi_TenGoiTooLong() {
+        GoiDichVu goi = new GoiDichVu(null, "A".repeat(256), "Mo ta", 100.0, 30, 10);
+        assertThrows(RuntimeException.class, () -> goiDichVuService.themGoi(goi));
+    }
+
+    @Test
+    void TC_GOI_024_ThemGoi_MoTaNull() {
+        GoiDichVu goi = new GoiDichVu(null, "Goi test", null, 100.0, 30, 10);
+        assertThrows(RuntimeException.class, () -> goiDichVuService.themGoi(goi));
+    }
+
+    @Test
+    void TC_GOI_025_ThemGoi_MoTaTooLong() {
+        GoiDichVu goi = new GoiDichVu(null, "Goi test", "A".repeat(256), 100.0, 30, 10);
+        assertThrows(RuntimeException.class, () -> goiDichVuService.themGoi(goi));
+    }
 }

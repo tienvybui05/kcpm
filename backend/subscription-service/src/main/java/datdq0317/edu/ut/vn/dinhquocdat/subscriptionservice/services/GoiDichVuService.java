@@ -12,6 +12,8 @@ import jakarta.transaction.Transactional;
 @Service
 public class GoiDichVuService implements IGoiDichVuService {
 
+    private static final int MAX_TEXT_LENGTH = 255;
+
     @Autowired
     private IGoiDichVuRepository goiDichVuRepository;
 
@@ -25,6 +27,18 @@ public class GoiDichVuService implements IGoiDichVuService {
 
         if (goi.getTenGoi() == null || goi.getTenGoi().trim().isEmpty()) {
             throw new RuntimeException("Tên gói dịch vụ không được rỗng!");
+        }
+
+        if (goi.getTenGoi().length() > MAX_TEXT_LENGTH) {
+            throw new RuntimeException("Ten goi dich vu khong duoc vuot qua 255 ky tu!");
+        }
+
+        if (goi.getMoTa() == null) {
+            throw new RuntimeException("Mo ta goi dich vu khong duoc rong!");
+        }
+
+        if (goi.getMoTa().length() > MAX_TEXT_LENGTH) {
+            throw new RuntimeException("Mo ta goi dich vu khong duoc vuot qua 255 ky tu!");
         }
 
         if (goi.getGia() == null || goi.getGia() <= 0) {
