@@ -156,12 +156,14 @@ public class PhuongTienService implements IPhuongTienService {
             throw new IllegalArgumentException("Biển số không được để trống");
         }
 
-        if (dto.getMaTaiXe() <= 0) {
-            throw new IllegalArgumentException("Mã tài xế phải lớn hơn 0");
+        // 1. Phải check null trước tiên
+        if (dto.getMaTaiXe() == null) {
+            throw new IllegalArgumentException("Mã tài xế không được để trống");
         }
 
-        if (dto.getMaPin() != null && dto.getMaPin() <= 0) {
-            throw new IllegalArgumentException("Mã Pin phải lớn hơn 0");
+        // 2. Chắc chắn nó hết null rồi thì mới đem đi so sánh số học an toàn
+        if (dto.getMaTaiXe() <= 0) {
+            throw new IllegalArgumentException("Mã tài xế phải lớn hơn 0");
         }
 
         if (isBlank(dto.getLoaiXe())) {
