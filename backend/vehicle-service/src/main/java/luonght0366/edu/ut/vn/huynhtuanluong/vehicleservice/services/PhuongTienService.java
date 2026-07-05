@@ -183,6 +183,10 @@ public class PhuongTienService implements IPhuongTienService {
             throw new IllegalArgumentException("Mã tài xế không được để trống");
         }
 
+        if (dto.getMaPin() != null && dto.getMaPin() <= 0) {
+            throw new IllegalArgumentException("Mã Pin phải lớn hơn 0");
+        }
+
         validateLicensePlate(dto.getBienSo());
     }
 
@@ -202,6 +206,12 @@ public class PhuongTienService implements IPhuongTienService {
             // Bổ sung bắt lỗi khi update
             if (dto.getMaTaiXe() <= 0) {
                 throw new IllegalArgumentException("Mã tài xế phải lớn hơn 0");
+            }
+        }
+
+        if (dto.getMaPin() != null) {
+            if (dto.getMaPin() <= 0) { // <-- Đổi MaTaiXe thành MaPin
+                throw new IllegalArgumentException("Mã Pin phải lớn hơn 0");
             }
         }
 
@@ -244,6 +254,10 @@ public class PhuongTienService implements IPhuongTienService {
 
         String value = bienSo.trim().toUpperCase();
 
+        if (value.length() < 7) {
+            throw new IllegalArgumentException("Biển số chưa đủ độ dài quy định");
+        }
+
         // 1. Kiểm tra giới hạn độ dài trước (7 - 12 ký tự) để pass đúng case lỗi độ dài
         if (value.length() > 12) {
             throw new IllegalArgumentException("Biển số vượt quá độ dài quy định");
@@ -251,7 +265,7 @@ public class PhuongTienService implements IPhuongTienService {
 
         // 2. Kiểm tra định dạng Regex (Lúc này Regex không cần cụm Lookahead độ dài nữa vì đã check ở trên)
         // Regex tinh gọn lại:
-        String tinhGonRegex = "^\\d{2}[A-Z]-?\\d{3,4}(\\.\\d{2,4}|\\d{1,4})$";
+        String tinhGonRegex = "^\\d{2}[A-Z0-9]{1,2}[-.]?\\d{3,5}(?:\\.\\d{2,4})?$";
         if (!value.matches(tinhGonRegex)) {
             throw new IllegalArgumentException("Dữ liệu JSON sai định dạng hoặc biển số không hợp lệ");
         }
