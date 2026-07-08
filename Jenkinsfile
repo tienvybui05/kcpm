@@ -100,7 +100,8 @@ pipeline {
                         echo "☁️ Đóng gói và Deploy [${serviceName}] lên Google Cloud Run..."
                         def imageTag = "${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REPO}/${serviceName}:latest"
 
-                        dir(serviceName) {
+                        // SỬA ĐÚNG DÒNG NÀY (Thêm chữ backend/ vào trước)
+                        dir("backend/${serviceName}") {
                             sh "docker build -t ${imageTag} ."
 
                             withCredentials([file(credentialsId: "${GCP_CREDENTIALS_ID}", variable: 'GC_KEY')]) {
