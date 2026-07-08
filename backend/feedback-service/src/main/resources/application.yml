@@ -2,9 +2,10 @@ spring:
   application:
     name: feedback-service
   datasource:
-    url: jdbc:mysql://mysql_feedback:3306/feedback_service?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: root
-    password: root
+    # Dùng biến môi trường, mặc định trỏ về mysql_feedback ở local
+    url: jdbc:mysql://${DB_HOST:mysql_feedback}:${DB_PORT:3306}/${DB_NAME:feedback_service}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USER:root}
+    password: ${DB_PASS:root}
   jpa:
     hibernate:
       ddl-auto: update

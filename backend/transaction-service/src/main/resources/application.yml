@@ -2,9 +2,9 @@ spring:
   application:
     name: transaction-service
   datasource:
-    url: jdbc:mysql://mysql_transaction:3306/transaction_service?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: root
-    password: root
+    url: jdbc:mysql://${DB_HOST:mysql_transaction}:${DB_PORT:3306}/${DB_NAME:transaction_service}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USER:root}
+    password: ${DB_PASS:root}
   jpa:
     hibernate:
       ddl-auto: update

@@ -2,9 +2,9 @@ spring:
   application:
     name: vehicle-service
   datasource:
-    url: jdbc:mysql://mysql_vehicle:3306/vehicle_service?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: root
-    password: root
+    url: jdbc:mysql://${DB_HOST:mysql_vehicle}:${DB_PORT:3306}/${DB_NAME:vehicle_service}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USER:root}
+    password: ${DB_PASS:root}
   jpa:
     hibernate:
       ddl-auto: update

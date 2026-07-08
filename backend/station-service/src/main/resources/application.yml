@@ -2,9 +2,10 @@ spring:
   application:
     name: station-service
   datasource:
-    url: jdbc:mysql://mysql_station:3306/station_service?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: root
-    password: root
+    # Đọc biến DB_HOST trên Cloud, nếu không có thì xài mặc định là mysql_station (ở local)
+    url: jdbc:mysql://${DB_HOST:mysql_station}:${DB_PORT:3306}/${DB_NAME:station_service}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USER:root}
+    password: ${DB_PASS:root}
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,6 +16,7 @@ spring:
 
 server:
   port: 8084
+
 
 tomtom:
   api:
