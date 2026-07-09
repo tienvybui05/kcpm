@@ -37,6 +37,7 @@ pipeline {
         GCP_CREDENTIALS_ID  = 'GCP_CREDENTIALS' 
 
         CLOUD_SQL_IP        = '34.177.103.187'
+        DB_USER             = 'evuser'
         DB_PASS             = 'EvBattery2026!'
     }
 
@@ -109,7 +110,7 @@ pipeline {
                                 sh "gcloud auth configure-docker ${GCP_REGION}-docker.pkg.dev --quiet"
                                 sh "docker push ${imageTag}"
 
-                                def envVars = "DB_HOST=${CLOUD_SQL_IP},DB_PORT=3306,DB_NAME=${dbName},DB_USER=root,DB_PASS=${DB_PASS}"
+                                def envVars = "DB_HOST=${CLOUD_SQL_IP},DB_PORT=3306,DB_NAME=${dbName},DB_USER=${DB_USER},DB_PASS=${DB_PASS}"
 
                                 sh """
                                     gcloud run deploy ${serviceName} \\
