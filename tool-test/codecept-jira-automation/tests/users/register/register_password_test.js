@@ -91,7 +91,7 @@ I.amOnPage("/register");
 
 fillValidData(I);
 
-const password = "Abcdef@1234567890123"; // 21 ký tự
+const password = "Abcdef@12345678901234"; // 21 ký tự
 
 I.fillField("Mat_Khau", password);
 I.fillField("Xac_Nhan_Mat_Khau", password);
