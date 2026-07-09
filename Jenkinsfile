@@ -38,7 +38,7 @@ pipeline {
 
         CLOUD_SQL_IP        = '34.177.103.187'
         DB_USER             = 'evuser'
-        DB_PASS             = 'EvBattery2026!'
+        DB_PASS             = 'Ev_station_2026'
     }
 
     triggers {
