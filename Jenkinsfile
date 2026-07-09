@@ -37,7 +37,7 @@ pipeline {
         GCP_CREDENTIALS_ID  = 'GCP_CREDENTIALS' 
 
         CLOUD_SQL_IP        = '34.177.103.187'
-        DB_PASS             = 'EVmysql123@'
+        DB_PASS             = 'EvBattery2026!'
     }
 
     triggers {
