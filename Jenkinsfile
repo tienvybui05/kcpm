@@ -27,18 +27,6 @@ pipeline {
 
         WEB_URL                 = 'http://host.docker.internal:3000'
         API_URL                 = 'http://gateway:8080'
-
-        // --- 3. Cấu hình Google Cloud (GCP) ---
-        GCP_PROJECT_ID      = 'ev-project-500309'
-        GCP_REGION          = 'asia-southeast1'
-        ARTIFACT_REPO       = 'ev-repo'
-        
-        // Sửa lại thành chuỗi bình thường (KHÔNG dùng hàm credentials ở đây)
-        GCP_CREDENTIALS_ID  = 'GCP_CREDENTIALS' 
-
-        CLOUD_SQL_IP        = '34.177.103.187'
-        DB_USER             = 'evuser'
-        DB_PASS             = 'Ev_station_2026'
     }
 
     triggers {
@@ -66,6 +54,7 @@ pipeline {
                 echo '📦 Cài đặt thư viện Frontend UI Test...'
                 dir('tool-test/codecept-jira-automation') {
                     sh 'npm install'
+                    // Cài trình duyệt cho Playwright (cần thiết nếu agent Jenkins chạy trên Linux thuần)
                     sh 'npx playwright install chromium --with-deps'
                 }
             }
@@ -96,36 +85,7 @@ pipeline {
                         }
                     }
 
-                    // --- ĐỊNH NGHĨA HÀM DEPLOY LÊN GOOGLE CLOUD ---
-                    def deployGCP = { serviceName, port, dbName ->
-                        echo "☁️ Đóng gói và Deploy [${serviceName}] lên Google Cloud Run..."
-                        def imageTag = "${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${ARTIFACT_REPO}/${serviceName}:latest"
-
-                        // SỬA ĐÚNG DÒNG NÀY (Thêm chữ backend/ vào trước)
-                        dir("backend/${serviceName}") {
-                            sh "docker build -t ${imageTag} ."
-
-                            withCredentials([file(credentialsId: "${GCP_CREDENTIALS_ID}", variable: 'GC_KEY')]) {
-                                sh "gcloud auth activate-service-account --key-file=\${GC_KEY}"
-                                sh "gcloud auth configure-docker ${GCP_REGION}-docker.pkg.dev --quiet"
-                                sh "docker push ${imageTag}"
-
-                                def envVars = "DB_HOST=${CLOUD_SQL_IP},DB_PORT=3306,DB_NAME=${dbName},DB_USER=${DB_USER},DB_PASS=${DB_PASS}"
-
-                                sh """
-                                    gcloud run deploy ${serviceName} \\
-                                    --image ${imageTag} \\
-                                    --region ${GCP_REGION} \\
-                                    --project ${GCP_PROJECT_ID} \\
-                                    --port ${port} \\
-                                    --set-env-vars ${envVars} \\
-                                    --allow-unauthenticated \\
-                                    --quiet
-                                """
-                            }
-                        }
-                    }
-
+                    // Kiểm tra xem Jenkins đang chạy vì đến giờ (00:00) hay vì có người Push Code
                     def isTimer = currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause')
 
                     if (isTimer) {
@@ -133,6 +93,7 @@ pipeline {
                         runBE("ALL")
                         runFE("ALL")
                     } else {
+                        // Đọc lời nhắn commit cuối cùng của Dev
                         def commitMsg = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim().toLowerCase()
                         echo "💻 Lời nhắn commit: ${commitMsg}"
 
@@ -140,7 +101,6 @@ pipeline {
                         if (commitMsg.contains('[be-station]')) {
                             echo '🚀 Bắt đầu test riêng lẻ Backend: station-service'
                             runBE("station-service")
-                            deployGCP("station-service", "8084", "station_service")
                         }
                         else if (commitMsg.contains('[fe-station]')) {
                             echo '🚀 Bắt đầu test riêng lẻ Frontend UI: station'
@@ -150,14 +110,12 @@ pipeline {
                             echo '🚀 Bắt đầu test luồng FIX: Backend station-service + Frontend UI station'
                             runBE("station-service")
                             runFE("station/**/*_test.js")
-                            deployGCP("station-service", "8084", "station_service")
                         }
 
-                        // ================= MODULE USERS =================
+                        // ================= MODULE USERS / REGISTER =================
                         else if (commitMsg.contains('[be-users]')) {
                             echo '🚀 Bắt đầu test riêng lẻ Backend: users-service'
                             runBE("users-service")
-                            deployGCP("user-service", "8081", "user_service")
                         }
                         else if (commitMsg.contains('[fe-users]')) {
                             echo '🚀 Bắt đầu test riêng lẻ Frontend UI: users'
@@ -167,14 +125,12 @@ pipeline {
                             echo '🚀 Bắt đầu test luồng FIX: Backend users-service + Frontend UI users'
                             runBE("users-service")
                             runFE("users/**/*_test.js")
-                            deployGCP("user-service", "8081", "user_service")
                         }
 
                         // ================= MODULE VEHICLE =================
                         else if (commitMsg.contains('[be-vehicle]')) {
                             echo '🚀 Bắt đầu test riêng lẻ Backend: vehicle-service'
                             runBE("vehicle-service")
-                            deployGCP("vehicle-service", "8088", "vehicle_service")
                         }
                         else if (commitMsg.contains('[fe-vehicle]')) {
                             echo '🚀 Bắt đầu test riêng lẻ Frontend UI: vehicle'
@@ -184,14 +140,12 @@ pipeline {
                             echo '🚀 Bắt đầu test luồng FIX: Backend vehicle-service + Frontend UI vehicle'
                             runBE("vehicle-service")
                             runFE("vehicle/**/*_test.js")
-                            deployGCP("vehicle-service", "8088", "vehicle_service")
                         }
 
                         // ================= MODULE TRANSACTION =================
                         else if (commitMsg.contains('[be-transaction]')) {
                             echo '🚀 Bắt đầu test riêng lẻ Backend: transaction-service'
                             runBE("transaction-service")
-                            deployGCP("transaction-service", "8085", "transaction_service")
                         }
                         else if (commitMsg.contains('[fe-transaction]')) {
                             echo '🚀 Bắt đầu test riêng lẻ Frontend UI: transaction'
@@ -201,14 +155,12 @@ pipeline {
                             echo '🚀 Bắt đầu test luồng FIX: Backend transaction-service + Frontend UI transaction'
                             runBE("transaction-service")
                             runFE("transaction/**/*_test.js")
-                            deployGCP("transaction-service", "8085", "transaction_service")
                         }
 
                         // ================= MODULE BATTERY =================
                         else if (commitMsg.contains('[be-battery]')) {
                             echo '🚀 Bắt đầu test riêng lẻ Backend: battery-service'
                             runBE("battery-service")
-                            deployGCP("battery-service", "8083", "battery_service")
                         }
                         else if (commitMsg.contains('[fe-battery]')) {
                             echo '🚀 Bắt đầu test riêng lẻ Frontend UI: battery'
@@ -218,14 +170,12 @@ pipeline {
                             echo '🚀 Bắt đầu test luồng FIX: Backend battery-service + Frontend UI battery'
                             runBE("battery-service")
                             runFE("battery/**/*_test.js")
-                            deployGCP("battery-service", "8083", "battery_service")
                         }
 
                         // ================= MODULE FEEDBACK =================
                         else if (commitMsg.contains('[be-feedback]')) {
                             echo '🚀 Bắt đầu test riêng lẻ Backend: feedback-service'
                             runBE("feedback-service")
-                            deployGCP("feedback-service", "8086", "feedback_service")
                         }
                         else if (commitMsg.contains('[fe-feedback]')) {
                             echo '🚀 Bắt đầu test riêng lẻ Frontend UI: feedback'
@@ -235,14 +185,12 @@ pipeline {
                             echo '🚀 Bắt đầu test luồng FIX: Backend feedback-service + Frontend UI feedback'
                             runBE("feedback-service")
                             runFE("feedback/**/*_test.js")
-                            deployGCP("feedback-service", "8086", "feedback_service")
                         }
 
                         // ================= MODULE SUBSCRIPTION =================
                         else if (commitMsg.contains('[be-subscription]')) {
                             echo '🚀 Bắt đầu test riêng lẻ Backend: subscription-service'
                             runBE("subscription-service")
-                            deployGCP("subscription-service", "8082", "subscription_service")
                         }
                         else if (commitMsg.contains('[fe-subscription]')) {
                             echo '🚀 Bắt đầu test riêng lẻ Frontend UI: subscription'
@@ -252,7 +200,6 @@ pipeline {
                             echo '🚀 Bắt đầu test luồng FIX: Backend subscription-service + Frontend UI subscription'
                             runBE("subscription-service")
                             runFE("subscription/**/*_test.js")
-                            deployGCP("subscription-service", "8082", "subscription_service")
                         }
 
                         // ================= MẶC ĐỊNH (FULL) =================
@@ -270,6 +217,7 @@ pipeline {
     post {
         always {
             echo '🏁 Tiến trình CI/CD hoàn tất, tự động dọn dẹp môi trường và thu thập hình ảnh lỗi (nếu có).'
+            // Lưu lại các ảnh chụp màn hình UI bị lỗi vào dashboard Jenkins để dễ xem
             archiveArtifacts artifacts: 'tool-test/codecept-jira-automation/output/*.png', allowEmptyArchive: true
         }
         success {
