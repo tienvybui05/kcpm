@@ -4490,7 +4490,7 @@
               "name": "register taixe -sodienthoai",
               "item": [
                 {
-                  "name": "[soDienThoai - min-=9] Đăng ký với số điện thoại 9 chữ số",
+                  "name": "[soDienThoai - min- = max- =9] Đăng ký với số điện thoại 9 chữ số",
                   "event": [
                     {
                       "listen": "prerequest",
@@ -4547,7 +4547,7 @@
                   "response": []
                 },
                 {
-                  "name": "[soDienThoai - min=10] Đăng ký với số điện thoại 10 chữ số",
+                  "name": "[soDienThoai - min = max =10] Đăng ký với số điện thoại 10 chữ số",
                   "event": [
                     {
                       "listen": "test",
@@ -4658,7 +4658,7 @@
                   "response": []
                 },
                 {
-                  "name": "[soDienThoai - max+=12] Đăng ký với số điện thoại 12 chữ số",
+                  "name": "[soDienThoai - max+=11] Đăng ký với số điện thoại 11 chữ số",
                   "event": [
                     {
                       "listen": "prerequest",
@@ -4891,7 +4891,7 @@
                   "response": []
                 },
                 {
-                  "name": "[gioiTinh - min] Đăng ký với giới tính \"Nam\"",
+                  "name": "[gioiTinh - valid] Đăng ký với giới tính \"Nam\"",
                   "event": [
                     {
                       "listen": "test",
@@ -4934,7 +4934,7 @@
                   "response": []
                 },
                 {
-                  "name": "[gioiTinh - min+] Đăng ký với giới tính \"Nữ\"",
+                  "name": "[gioiTinh - valid] Đăng ký với giới tính \"Nữ\"",
                   "event": [
                     {
                       "listen": "test",
@@ -5415,7 +5415,7 @@
                   "response": []
                 },
                 {
-                  "name": "[ngaySinh - min] Đăng ký với ngày sinh đúng 18 tuổi (2008-01-01)",
+                  "name": "[ngaySinh - valid] Đăng ký với ngày sinh đúng 18 tuổi (2008-01-01)",
                   "event": [
                     {
                       "listen": "test",
@@ -5507,7 +5507,7 @@
               "name": "register taixe -banglaixe",
               "item": [
                 {
-                  "name": "[bangLaiXe - min-] Không truyền trường bangLaiXe",
+                  "name": "[bangLaiXe - invalid] Không truyền trường bangLaiXe",
                   "event": [
                     {
                       "listen": "test",
@@ -5551,7 +5551,7 @@
                   "response": []
                 },
                 {
-                  "name": "[bangLaiXe - min] Đăng ký với bangLaiXe = \"B\" (1 ký tự)",
+                  "name": "[bangLaiXe - valid] Đăng ký với bangLaiXe = \"B\" (1 ký tự)",
                   "event": [
                     {
                       "listen": "test",
@@ -5595,7 +5595,7 @@
                   "response": []
                 },
                 {
-                  "name": "[bangLaiXe - min+] Đăng ký với bangLaiXe = \"B1\" (2 ký tự)",
+                  "name": "[bangLaiXe - valid] Đăng ký với bangLaiXe = \"B1\" (2 ký tự)",
                   "event": [
                     {
                       "listen": "test",
@@ -11764,7 +11764,7 @@
                       "listen": "prerequest",
                       "script": {
                         "exec": [
-                          "const chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\";\r",
+                          "const chars = \"ABCDEFGHIJKLMN\";\r",
                           "const random1Char = chars.charAt(Math.floor(Math.random() * chars.length));\r",
                           "\r",
                           "pm.environment.set(\"current_tenTram\", random1Char);"
@@ -16129,7 +16129,7 @@
                       "listen": "prerequest",
                       "script": {
                         "exec": [
-                          "const chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\";\r",
+                          "const chars = \"MNOPQRSTUVWXYZ0123456789\";\r",
                           "const random1Char = chars.charAt(Math.floor(Math.random() * chars.length));\r",
                           "\r",
                           "pm.environment.set(\"current_tenTram\", random1Char);"
@@ -24240,6 +24240,118 @@
                   "response": []
                 },
                 {
+                  "name": "[BVA-HIST-19] - hanhDong = 99 ký tự (max-)",
+                  "event": [
+                    {
+                      "listen": "prerequest",
+                      "script": {
+                        "exec": [
+                          "const prefix = \"HanhDong \" + Date.now() + \" \";",
+                          "const paddingLength = 99 - prefix.length;",
+                          "const current_hanhDong = prefix + \"B\".repeat(paddingLength);",
+                          "pm.environment.set(\"longString99\", current_hanhDong);"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    },
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "let res = pm.response.json();",
+                          "pm.test(\"maLichSuPinTram is returned\", function () {",
+                          "    pm.expect(res.maLichSuPinTram).to.exist;",
+                          "});",
+                          "if (res && res.maLichSuPinTram) { pm.environment.set(\"maLichSuPinTram\", res.maLichSuPinTram); }"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{accessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"hanhDong\": \"{{longString99}}\",\n  \"ngayThayDoi\": \"2026-06-18T10:00:00\",\n  \"maPin\": 1,\n  \"maTram\": 1\n}"
+                    },
+                    "url": {
+                      "raw": "{{url}}/battery-service/lichsu-pin-tram",
+                      "host": ["{{url}}"],
+                      "path": ["battery-service", "lichsu-pin-tram"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-HIST-18] - hanhDong = 2 ký tự (min+)",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "let res = pm.response.json();",
+                          "pm.test(\"maLichSuPinTram is returned\", function () {",
+                          "    pm.expect(res.maLichSuPinTram).to.exist;",
+                          "});",
+                          "if (res && res.maLichSuPinTram) { pm.environment.set(\"maLichSuPinTram\", res.maLichSuPinTram); }"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{accessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"hanhDong\": \"AB\",\n  \"ngayThayDoi\": \"2026-06-18T10:00:00\",\n  \"maPin\": 1,\n  \"maTram\": 1\n}"
+                    },
+                    "url": {
+                      "raw": "{{url}}/battery-service/lichsu-pin-tram",
+                      "host": ["{{url}}"],
+                      "path": ["battery-service", "lichsu-pin-tram"]
+                    }
+                  },
+                  "response": []
+                },
+                {
                   "name": "[BVA-HIST-05] - maTram = 1",
                   "event": [
                     {
@@ -24920,6 +25032,51 @@
                       "raw": "{{url}}/battery-service/pins/1",
                       "host": ["{{url}}"],
                       "path": ["battery-service", "pins", "1"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-PIN-37] - dungLuong = 150.1",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});"
+                        ],
+                        "type": "text/javascript"
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{accessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"loaiPin\": \"LFP-48V\",\n  \"dungLuong\": 150.1,\n  \"tinhTrang\": \"DAY\",\n  \"trangThaiSoHuu\": \"SAN_SANG\",\n  \"sucKhoe\": 85.0,\n  \"ngayBaoDuongGanNhat\": \"2026-01-15\",\n  \"ngayNhapKho\": \"2025-12-20\"\n}"
+                    },
+                    "url": {
+                      "raw": "{{url}}/battery-service/pins",
+                      "host": ["{{url}}"],
+                      "path": ["battery-service", "pins"]
                     }
                   },
                   "response": []
@@ -25676,7 +25833,6 @@
                 {
                   "listen": "prerequest",
                   "script": {
-                    "type": "text/javascript",
                     "exec": [
                       "function generateVIN() {",
                       "  const allowed = \"ABCDEFGHJKLMNPRSTUVWXYZ0123456789\"; // excludes I, O, Q",
@@ -25695,7 +25851,10 @@
                       "const randomId = Math.floor(Math.random() * 9000) + 1000;",
                       "pm.environment.set(\"random_vin_update\", generateVIN());",
                       "pm.environment.set(\"random_bienSo_update\", \"59U-\" + randomId);"
-                    ]
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
                   }
                 },
                 {
@@ -25712,66 +25871,7 @@
                       "    return;\r",
                       "}\r",
                       "\r",
-                      "let getResponse = null;\r",
-                      "\r",
-                      "try {\r",
-                      "    getResponse = pm.response.json();\r",
-                      "} catch (e) {\r",
-                      "    pm.test(\"Response body is JSON\", function () {\r",
-                      "        pm.expect.fail(\"Response is not valid JSON\");\r",
-                      "    });\r",
-                      "    return;\r",
-                      "}\r",
-                      "\r",
-                      "const maPhuongTien_response = getResponse.maPhuongTien;\r",
-                      "const vin_response = getResponse.vin;\r",
-                      "const bienSo_response = getResponse.bienSo;\r",
-                      "const loaiXe_response = getResponse.loaiXe;\r",
-                      "const maTaiXe_response = getResponse.maTaiXe;\r",
-                      "const maPin_response = getResponse.maPin;\r",
-                      "\r",
-                      "// Expected\r",
-                      "const maPhuongTien_expect = Number(pm.variables.get(\"maPhuongTien\"));\r",
-                      "const vin_expect = pm.variables.get(\"random_vin_update\");\r",
-                      "const bienSo_expect = pm.variables.get(\"random_bienSo_update\");\r",
-                      "const loaiXe_expect = pm.variables.get(\"dataloaiXe_updateflow\");\r",
-                      "const maTaiXe_expect = Number(pm.variables.get(\"datamaTaiXe_createflow\"));\r",
-                      "\r",
-                      "pm.test(\"maPhuongTien is correct\", function () {\r",
-                      "    pm.expect(maPhuongTien_response).to.eql(maPhuongTien_expect);\r",
-                      "});\r",
-                      "\r",
-                      "pm.test(\"vin is updated correctly\", function () {\r",
-                      "    pm.expect(vin_response).to.eql(vin_expect);\r",
-                      "});\r",
-                      "\r",
-                      "pm.test(\"bienSo is updated correctly\", function () {\r",
-                      "    pm.expect(bienSo_response).to.eql(bienSo_expect);\r",
-                      "});\r",
-                      "\r",
-                      "pm.test(\"loaiXe is updated correctly\", function () {\r",
-                      "    pm.expect(loaiXe_response).to.eql(loaiXe_expect);\r",
-                      "});\r",
-                      "\r",
-                      "pm.test(\"maTaiXe is correct\", function () {\r",
-                      "    pm.expect(maTaiXe_response).to.eql(maTaiXe_expect);\r",
-                      "});\r",
-                      "\r",
-                      "pm.test(\"maPin is still null\", function () {\r",
-                      "    pm.expect(maPin_response).to.eql(null);\r",
-                      "});\r",
-                      "\r",
-                      "// Lưu data updated cho request sau dùng\r",
-                      "pm.collectionVariables.set(\"dataVehicle_vin_updated\", vin_response);\r",
-                      "pm.collectionVariables.set(\"dataVehicle_bienSo_updated\", bienSo_response);\r",
-                      "pm.collectionVariables.set(\"dataVehicle_loaiXe_updated\", loaiXe_response);\r",
-                      "pm.collectionVariables.set(\"datamaTaiXe_createflow\", String(maTaiXe_response));\r",
-                      "\r",
-                      "pm.environment.set(\"dataVehicle_vin_updated\", vin_response);\r",
-                      "pm.environment.set(\"dataVehicle_bienSo_updated\", bienSo_response);\r",
-                      "pm.environment.set(\"dataVehicle_loaiXe_updated\", loaiXe_response);\r",
-                      "\r",
-                      "console.log(\"Updated vehicle:\", getResponse);"
+                      ""
                     ],
                     "type": "text/javascript",
                     "packages": {},
@@ -25810,52 +25910,7 @@
                       "    pm.response.to.have.status(200);\r",
                       "});\r",
                       "\r",
-                      "if (pm.response.code === 200) {\r",
-                      "    const getResponse = pm.response.json();\r",
-                      "\r",
-                      "    const maPhuongTien_response = getResponse.maPhuongTien;\r",
-                      "    const vin_response = getResponse.vin;\r",
-                      "    const bienSo_response = getResponse.bienSo;\r",
-                      "    const loaiXe_response = getResponse.loaiXe;\r",
-                      "    const maTaiXe_response = getResponse.maTaiXe;\r",
-                      "    const maPin_response = getResponse.maPin;\r",
-                      "\r",
-                      "    // expect\r",
-                      "    const maPhuongTien_expect = Number(pm.variables.get(\"maPhuongTien\"));\r",
-                      "    const vin_expect = pm.variables.get(\"dataVehicle_vin_updated\");\r",
-                      "    const bienSo_expect = pm.variables.get(\"dataVehicle_bienSo_updated\");\r",
-                      "    const loaiXe_expect = pm.variables.get(\"dataVehicle_loaiXe_updated\");\r",
-                      "    const maTaiXe_expect = Number(pm.variables.get(\"datamaTaiXe_createflow\"));\r",
-                      "\r",
-                      "    pm.test(\"maPhuongTien is correct\", function () {\r",
-                      "        pm.expect(maPhuongTien_response).to.eql(maPhuongTien_expect);\r",
-                      "    });\r",
-                      "\r",
-                      "    pm.test(\"vin after update is correct\", function () {\r",
-                      "        pm.expect(vin_response).to.eql(vin_expect);\r",
-                      "    });\r",
-                      "\r",
-                      "    pm.test(\"bienSo after update is correct\", function () {\r",
-                      "        pm.expect(bienSo_response).to.eql(bienSo_expect);\r",
-                      "    });\r",
-                      "\r",
-                      "    pm.test(\"loaiXe after update is correct\", function () {\r",
-                      "        pm.expect(loaiXe_response).to.eql(loaiXe_expect);\r",
-                      "    });\r",
-                      "\r",
-                      "    pm.test(\"maTaiXe is correct\", function () {\r",
-                      "        pm.expect(maTaiXe_response).to.eql(maTaiXe_expect);\r",
-                      "    });\r",
-                      "\r",
-                      "    pm.test(\"maPin is still null\", function () {\r",
-                      "        pm.expect(maPin_response).to.eql(null);\r",
-                      "    });\r",
-                      "\r",
-                      "    console.log(\"Get vehicle after update success:\", getResponse);\r",
-                      "} else {\r",
-                      "    console.log(\"Request failed. Status:\", pm.response.code);\r",
-                      "    console.log(\"Response body:\", pm.response.text());\r",
-                      "}"
+                      ""
                     ],
                     "type": "text/javascript",
                     "packages": {},
@@ -25885,52 +25940,7 @@
                       "    pm.response.to.have.status(200);\r",
                       "});\r",
                       "\r",
-                      "if (pm.response.code === 200) {\r",
-                      "    const getResponse = pm.response.json();\r",
-                      "\r",
-                      "    pm.test(\"Response is array\", function () {\r",
-                      "        pm.expect(getResponse).to.be.an(\"array\");\r",
-                      "    });\r",
-                      "\r",
-                      "    const maPhuongTien_expect = Number(pm.variables.get(\"maPhuongTien\"));\r",
-                      "    const vin_expect = pm.variables.get(\"dataVehicle_vin_updated\");\r",
-                      "    const bienSo_expect = pm.variables.get(\"dataVehicle_bienSo_updated\");\r",
-                      "    const loaiXe_expect = pm.variables.get(\"dataVehicle_loaiXe_updated\");\r",
-                      "    const maTaiXe_expect = Number(pm.variables.get(\"datamaTaiXe_createflow\"));\r",
-                      "\r",
-                      "    const foundVehicle = getResponse.find(vehicle =>\r",
-                      "        vehicle.maPhuongTien === maPhuongTien_expect\r",
-                      "    );\r",
-                      "\r",
-                      "    pm.test(\"Updated vehicle exists in list\", function () {\r",
-                      "        pm.expect(foundVehicle).to.not.be.undefined;\r",
-                      "    });\r",
-                      "\r",
-                      "    pm.test(\"Updated vehicle vin is correct\", function () {\r",
-                      "        pm.expect(foundVehicle.vin).to.eql(vin_expect);\r",
-                      "    });\r",
-                      "\r",
-                      "    pm.test(\"Updated vehicle bienSo is correct\", function () {\r",
-                      "        pm.expect(foundVehicle.bienSo).to.eql(bienSo_expect);\r",
-                      "    });\r",
-                      "\r",
-                      "    pm.test(\"Updated vehicle loaiXe is correct\", function () {\r",
-                      "        pm.expect(foundVehicle.loaiXe).to.eql(loaiXe_expect);\r",
-                      "    });\r",
-                      "\r",
-                      "    pm.test(\"Updated vehicle maTaiXe is correct\", function () {\r",
-                      "        pm.expect(foundVehicle.maTaiXe).to.eql(maTaiXe_expect);\r",
-                      "    });\r",
-                      "\r",
-                      "    pm.test(\"Updated vehicle maPin is still null\", function () {\r",
-                      "        pm.expect(foundVehicle.maPin).to.eql(null);\r",
-                      "    });\r",
-                      "\r",
-                      "    console.log(\"Updated vehicle found in list:\", foundVehicle);\r",
-                      "} else {\r",
-                      "    console.log(\"Request failed. Status:\", pm.response.code);\r",
-                      "    console.log(\"Response body:\", pm.response.text());\r",
-                      "}"
+                      ""
                     ],
                     "type": "text/javascript",
                     "packages": {},
@@ -28921,13 +28931,13 @@
           ]
         },
         {
-          "name": "create-vehicle-RBVA",
+          "name": "create-vehicle-RBVA/BVA",
           "item": [
             {
               "name": "create vehicle - nom",
               "item": [
                 {
-                  "name": "TC_RBVA_001_Create_Vehicle_Nominal",
+                  "name": "[BVA-VH-01] Nominal",
                   "event": [
                     {
                       "listen": "test",
@@ -28983,7 +28993,44 @@
               "name": "create vehicle - vin",
               "item": [
                 {
-                  "name": "TC_RBVA_002_vin_Min_Minus=16",
+                  "name": "[BVA-VH-02] VIN MinMax",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 201 Created\", function () {\r",
+                          "    pm.response.to.have.status(201);\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000002\",\r\n  \"bienSo\": \"51A-00003\",\r\n  \"loaiXe\": \"VinFast VF8\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{url}}/vehicle-service/vehicles",
+                      "host": ["{{url}}"],
+                      "path": ["vehicle-service", "vehicles"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[RBVA-VH-02] VIN < Min",
                   "event": [
                     {
                       "listen": "test",
@@ -29026,44 +29073,7 @@
                   "response": []
                 },
                 {
-                  "name": "TC_RBVA_003_vin_Min_Max=17",
-                  "event": [
-                    {
-                      "listen": "test",
-                      "script": {
-                        "exec": [
-                          "pm.test(\"Status code is 201 Created\", function () {\r",
-                          "    pm.response.to.have.status(201);\r",
-                          "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                      }
-                    }
-                  ],
-                  "request": {
-                    "method": "POST",
-                    "header": [],
-                    "body": {
-                      "mode": "raw",
-                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000002\",\r\n  \"bienSo\": \"51A-00003\",\r\n  \"loaiXe\": \"VinFast VF8\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
-                      "options": {
-                        "raw": {
-                          "language": "json"
-                        }
-                      }
-                    },
-                    "url": {
-                      "raw": "{{url}}/vehicle-service/vehicles",
-                      "host": ["{{url}}"],
-                      "path": ["vehicle-service", "vehicles"]
-                    }
-                  },
-                  "response": []
-                },
-                {
-                  "name": "TC_RBVA_004_vin_Max_Plus=18",
+                  "name": "[RBVA-VH-01] VIN > Max",
                   "event": [
                     {
                       "listen": "test",
@@ -29110,7 +29120,155 @@
               "name": "create vehicle - bienSo",
               "item": [
                 {
-                  "name": "TC_RBVA_005_bienSo_Min_Minus=6",
+                  "name": "[BVA-VH-03] bienSo Min",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 201 Created\", function () {\r",
+                          "    pm.response.to.have.status(201);\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000006\",\r\n  \"bienSo\": \"30A-123\",\r\n  \"loaiXe\": \"VinFast VF8\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{url}}/vehicle-service/vehicles",
+                      "host": ["{{url}}"],
+                      "path": ["vehicle-service", "vehicles"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-VH-04] bienSo Min+",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 201 Created\", function () {\r",
+                          "    pm.response.to.have.status(201);\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000007\",\r\n  \"bienSo\": \"30A-1234\",\r\n  \"loaiXe\": \"VinFast VF8\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{url}}/vehicle-service/vehicles",
+                      "host": ["{{url}}"],
+                      "path": ["vehicle-service", "vehicles"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-VH-05] bienSo Max-",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 201 Created\", function () {\r",
+                          "    pm.response.to.have.status(201);\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000008\",\r\n  \"bienSo\": \"30A-123.456\",\r\n  \"loaiXe\": \"VinFast VF8\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{url}}/vehicle-service/vehicles",
+                      "host": ["{{url}}"],
+                      "path": ["vehicle-service", "vehicles"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-VH-06] bienSo Max",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 201 Created\", function () {\r",
+                          "    pm.response.to.have.status(201);\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000009\",\r\n  \"bienSo\": \"30A-123.4567\",\r\n  \"loaiXe\": \"VinFast VF8\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{url}}/vehicle-service/vehicles",
+                      "host": ["{{url}}"],
+                      "path": ["vehicle-service", "vehicles"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[RBVA-VH-03] bienSo < Min",
                   "event": [
                     {
                       "listen": "test",
@@ -29152,155 +29310,7 @@
                   "response": []
                 },
                 {
-                  "name": "TC_RBVA_006_bienSo_Min=7",
-                  "event": [
-                    {
-                      "listen": "test",
-                      "script": {
-                        "exec": [
-                          "pm.test(\"Status code is 201 Created\", function () {\r",
-                          "    pm.response.to.have.status(201);\r",
-                          "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                      }
-                    }
-                  ],
-                  "request": {
-                    "method": "POST",
-                    "header": [],
-                    "body": {
-                      "mode": "raw",
-                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000006\",\r\n  \"bienSo\": \"30A-123\",\r\n  \"loaiXe\": \"VinFast VF8\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
-                      "options": {
-                        "raw": {
-                          "language": "json"
-                        }
-                      }
-                    },
-                    "url": {
-                      "raw": "{{url}}/vehicle-service/vehicles",
-                      "host": ["{{url}}"],
-                      "path": ["vehicle-service", "vehicles"]
-                    }
-                  },
-                  "response": []
-                },
-                {
-                  "name": "TC_RBVA_007_bienSo_Min_Plus=8",
-                  "event": [
-                    {
-                      "listen": "test",
-                      "script": {
-                        "exec": [
-                          "pm.test(\"Status code is 201 Created\", function () {\r",
-                          "    pm.response.to.have.status(201);\r",
-                          "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                      }
-                    }
-                  ],
-                  "request": {
-                    "method": "POST",
-                    "header": [],
-                    "body": {
-                      "mode": "raw",
-                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000007\",\r\n  \"bienSo\": \"30A-1234\",\r\n  \"loaiXe\": \"VinFast VF8\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
-                      "options": {
-                        "raw": {
-                          "language": "json"
-                        }
-                      }
-                    },
-                    "url": {
-                      "raw": "{{url}}/vehicle-service/vehicles",
-                      "host": ["{{url}}"],
-                      "path": ["vehicle-service", "vehicles"]
-                    }
-                  },
-                  "response": []
-                },
-                {
-                  "name": "TC_RBVA_008_bienSo_Max_Minus=11",
-                  "event": [
-                    {
-                      "listen": "test",
-                      "script": {
-                        "exec": [
-                          "pm.test(\"Status code is 201 Created\", function () {\r",
-                          "    pm.response.to.have.status(201);\r",
-                          "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                      }
-                    }
-                  ],
-                  "request": {
-                    "method": "POST",
-                    "header": [],
-                    "body": {
-                      "mode": "raw",
-                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000008\",\r\n  \"bienSo\": \"30A-123.456\",\r\n  \"loaiXe\": \"VinFast VF8\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
-                      "options": {
-                        "raw": {
-                          "language": "json"
-                        }
-                      }
-                    },
-                    "url": {
-                      "raw": "{{url}}/vehicle-service/vehicles",
-                      "host": ["{{url}}"],
-                      "path": ["vehicle-service", "vehicles"]
-                    }
-                  },
-                  "response": []
-                },
-                {
-                  "name": "TC_RBVA_009_bienSo_Max=12",
-                  "event": [
-                    {
-                      "listen": "test",
-                      "script": {
-                        "exec": [
-                          "pm.test(\"Status code is 201 Created\", function () {\r",
-                          "    pm.response.to.have.status(201);\r",
-                          "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                      }
-                    }
-                  ],
-                  "request": {
-                    "method": "POST",
-                    "header": [],
-                    "body": {
-                      "mode": "raw",
-                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000009\",\r\n  \"bienSo\": \"30A-123.4567\",\r\n  \"loaiXe\": \"VinFast VF8\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
-                      "options": {
-                        "raw": {
-                          "language": "json"
-                        }
-                      }
-                    },
-                    "url": {
-                      "raw": "{{url}}/vehicle-service/vehicles",
-                      "host": ["{{url}}"],
-                      "path": ["vehicle-service", "vehicles"]
-                    }
-                  },
-                  "response": []
-                },
-                {
-                  "name": "TC_RBVA_010_bienSo_Max_Plus=13",
+                  "name": "[RBVA-VH-04] bienSo > Max",
                   "event": [
                     {
                       "listen": "test",
@@ -29347,7 +29357,155 @@
               "name": "create vehicle - loaiXe",
               "item": [
                 {
-                  "name": "TC_RBVA_011_loaiXe_Min_Minus=1",
+                  "name": "[BVA-VH-07] loaiXe Min",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 201 Created\", function () {\r",
+                          "    pm.response.to.have.status(201);\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000012\",\r\n  \"bienSo\": \"51A-00012\",\r\n  \"loaiXe\": \"Xe\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{url}}/vehicle-service/vehicles",
+                      "host": ["{{url}}"],
+                      "path": ["vehicle-service", "vehicles"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-VH-08] loaiXe Min+",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 201 Created\", function () {\r",
+                          "    pm.response.to.have.status(201);\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000013\",\r\n  \"bienSo\": \"30A-00013\",\r\n  \"loaiXe\": \"VF3\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{url}}/vehicle-service/vehicles",
+                      "host": ["{{url}}"],
+                      "path": ["vehicle-service", "vehicles"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-VH-09] loaiXe Max-",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 201 Created\", function () {\r",
+                          "    pm.response.to.have.status(201);\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000014\",\r\n  \"bienSo\": \"30A-00014\",\r\n  \"loaiXe\": \"VinFast VF8 Eco Edition Premium Luxury SUV Electr\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{url}}/vehicle-service/vehicles",
+                      "host": ["{{url}}"],
+                      "path": ["vehicle-service", "vehicles"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-VH-10] loaiXe Max",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 201 Created\", function () {\r",
+                          "    pm.response.to.have.status(201);\r",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000015\",\r\n  \"bienSo\": \"30A-00015\",\r\n  \"loaiXe\": \"VinFast VF8 Eco Edition Premium Luxury SUV Electri\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{url}}/vehicle-service/vehicles",
+                      "host": ["{{url}}"],
+                      "path": ["vehicle-service", "vehicles"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[RBVA-VH-05] loaiXe < Min",
                   "event": [
                     {
                       "listen": "test",
@@ -29389,155 +29547,7 @@
                   "response": []
                 },
                 {
-                  "name": "TC_RBVA_012_loaiXe_Min=2",
-                  "event": [
-                    {
-                      "listen": "test",
-                      "script": {
-                        "exec": [
-                          "pm.test(\"Status code is 201 Created\", function () {\r",
-                          "    pm.response.to.have.status(201);\r",
-                          "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                      }
-                    }
-                  ],
-                  "request": {
-                    "method": "POST",
-                    "header": [],
-                    "body": {
-                      "mode": "raw",
-                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000012\",\r\n  \"bienSo\": \"51A-00012\",\r\n  \"loaiXe\": \"Xe\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
-                      "options": {
-                        "raw": {
-                          "language": "json"
-                        }
-                      }
-                    },
-                    "url": {
-                      "raw": "{{url}}/vehicle-service/vehicles",
-                      "host": ["{{url}}"],
-                      "path": ["vehicle-service", "vehicles"]
-                    }
-                  },
-                  "response": []
-                },
-                {
-                  "name": "TC_RBVA_013_loaiXe_Min_Plus=3",
-                  "event": [
-                    {
-                      "listen": "test",
-                      "script": {
-                        "exec": [
-                          "pm.test(\"Status code is 201 Created\", function () {\r",
-                          "    pm.response.to.have.status(201);\r",
-                          "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                      }
-                    }
-                  ],
-                  "request": {
-                    "method": "POST",
-                    "header": [],
-                    "body": {
-                      "mode": "raw",
-                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000013\",\r\n  \"bienSo\": \"30A-00013\",\r\n  \"loaiXe\": \"VF3\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
-                      "options": {
-                        "raw": {
-                          "language": "json"
-                        }
-                      }
-                    },
-                    "url": {
-                      "raw": "{{url}}/vehicle-service/vehicles",
-                      "host": ["{{url}}"],
-                      "path": ["vehicle-service", "vehicles"]
-                    }
-                  },
-                  "response": []
-                },
-                {
-                  "name": "TC_RBVA_014_loaiXe_Max_Minus=49",
-                  "event": [
-                    {
-                      "listen": "test",
-                      "script": {
-                        "exec": [
-                          "pm.test(\"Status code is 201 Created\", function () {\r",
-                          "    pm.response.to.have.status(201);\r",
-                          "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                      }
-                    }
-                  ],
-                  "request": {
-                    "method": "POST",
-                    "header": [],
-                    "body": {
-                      "mode": "raw",
-                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000014\",\r\n  \"bienSo\": \"30A-00014\",\r\n  \"loaiXe\": \"VinFast VF8 Eco Edition Premium Luxury SUV Electr\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
-                      "options": {
-                        "raw": {
-                          "language": "json"
-                        }
-                      }
-                    },
-                    "url": {
-                      "raw": "{{url}}/vehicle-service/vehicles",
-                      "host": ["{{url}}"],
-                      "path": ["vehicle-service", "vehicles"]
-                    }
-                  },
-                  "response": []
-                },
-                {
-                  "name": "TC_RBVA_015_loaiXe_Max=50",
-                  "event": [
-                    {
-                      "listen": "test",
-                      "script": {
-                        "exec": [
-                          "pm.test(\"Status code is 201 Created\", function () {\r",
-                          "    pm.response.to.have.status(201);\r",
-                          "});"
-                        ],
-                        "type": "text/javascript",
-                        "packages": {},
-                        "requests": {}
-                      }
-                    }
-                  ],
-                  "request": {
-                    "method": "POST",
-                    "header": [],
-                    "body": {
-                      "mode": "raw",
-                      "raw": "{\r\n  \"vin\": \"1HGCR2F8XHA000015\",\r\n  \"bienSo\": \"30A-00015\",\r\n  \"loaiXe\": \"VinFast VF8 Eco Edition Premium Luxury SUV Electri\",\r\n  \"maTaiXe\": 1,\r\n  \"maPin\": 10\r\n}",
-                      "options": {
-                        "raw": {
-                          "language": "json"
-                        }
-                      }
-                    },
-                    "url": {
-                      "raw": "{{url}}/vehicle-service/vehicles",
-                      "host": ["{{url}}"],
-                      "path": ["vehicle-service", "vehicles"]
-                    }
-                  },
-                  "response": []
-                },
-                {
-                  "name": "TC_RBVA_016_loaiXe_Max_Plus=51",
+                  "name": "[RBVA-VH-06] loaiXe > Max",
                   "event": [
                     {
                       "listen": "test",
@@ -35109,17 +35119,19 @@
                           "    pm.expect(res.tenGoi).to.eql(\"Gói Premium 50 ký tự danh nghĩa abcde fghij klmno\");",
                           "});",
                           "pm.test(\"gia matches\", function () {",
-                          "    pm.expect(res.gia).to.eql(100000.0);",
+                          "    pm.expect(res.gia).to.eql(5000000.0);",
                           "});",
                           "pm.test(\"thoiGianDung matches\", function () {",
-                          "    pm.expect(res.thoiGianDung).to.eql(30);",
+                          "    pm.expect(res.thoiGianDung).to.eql(183);",
                           "});",
                           "pm.test(\"soLanDoi matches\", function () {",
-                          "    pm.expect(res.soLanDoi).to.eql(10);",
+                          "    pm.expect(res.soLanDoi).to.eql(500);",
                           "});",
                           "if (res.maGoi) { pm.environment.set(\"maGoi\", res.maGoi); }"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -35133,7 +35145,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Premium 50 ký tự danh nghĩa abcde fghij klmno\",\n  \"moTa\": \"Mô tả gói chuẩn danh nghĩa hợp lệ\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Premium 50 ký tự danh nghĩa abcde fghij klmno\",\n  \"moTa\": \"Mô tả gói chuẩn danh nghĩa hợp lệ\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35251,7 +35263,9 @@
                           "let res = pm.response.json();",
                           "if (res && res.maGoi) { pm.environment.set(\"maGoi\", res.maGoi); }"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -35265,7 +35279,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"A\",\n  \"moTa\": \"Mô tả gói\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"A\",\n  \"moTa\": \"Mô tả gói\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35317,7 +35331,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"{{longString254}}\",\n  \"moTa\": \"Mô tả gói\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"{{longString254}}\",\n  \"moTa\": \"Mô tả gói\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 182,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35369,7 +35383,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"{{longString255}}\",\n  \"moTa\": \"Mô tả gói\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"{{longString255}}\",\n  \"moTa\": \"Mô tả gói\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35390,7 +35404,9 @@
                           "let res = pm.response.json();",
                           "if (res && res.maGoi) { pm.environment.set(\"maGoi\", res.maGoi); }"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -35404,7 +35420,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Test\",\n  \"moTa\": \"\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Test\",\n  \"moTa\": \"\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35441,7 +35457,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Test 06\",\n  \"moTa\": \"M\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Test 06\",\n  \"moTa\": \"M\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35493,7 +35509,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Test 07\",\n  \"moTa\": \"{{longStringMoTa255}}\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Test 07\",\n  \"moTa\": \"{{longStringMoTa255}}\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35514,7 +35530,9 @@
                           "let res = pm.response.json();",
                           "if (res && res.maGoi) { pm.environment.set(\"maGoi\", res.maGoi); }"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -35528,7 +35546,44 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Giá Nhỏ\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 0.1,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Giá Nhỏ\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 0.1,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
+                    },
+                    "url": {
+                      "raw": "{{url}}/subscription-service/goidichvu",
+                      "host": ["{{url}}"],
+                      "path": ["subscription-service", "goidichvu"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-GDV-40] - gia = 0.2",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                          "let res = pm.response.json();",
+                          "if (res && res.maGoi) { pm.environment.set(\"maGoi\", res.maGoi); }"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"tenGoi\": \"Gói Giá Nhỏ +\",\n  \"moTa\": \"Mô tả +\",\n  \"gia\": 0.2,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35549,7 +35604,9 @@
                           "let res = pm.response.json();",
                           "if (res && res.maGoi) { pm.environment.set(\"maGoi\", res.maGoi); }"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -35563,7 +35620,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Giá Lớn\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 10000000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Giá Lớn\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 10000000.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35584,7 +35641,9 @@
                           "let res = pm.response.json();",
                           "if (res && res.maGoi) { pm.environment.set(\"maGoi\", res.maGoi); }"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -35598,7 +35657,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói 1 Ngày\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 1,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói 1 Ngày\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 1,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35609,7 +35668,7 @@
                   "response": []
                 },
                 {
-                  "name": "[BVA-GDV-11] - thoiGianDung = 3650",
+                  "name": "[BVA-GDV-41] - thoiGianDung = 2",
                   "event": [
                     {
                       "listen": "test",
@@ -35619,7 +35678,9 @@
                           "let res = pm.response.json();",
                           "if (res && res.maGoi) { pm.environment.set(\"maGoi\", res.maGoi); }"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -35633,7 +35694,44 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói 10 Năm\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 3650,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói 2 Ngày\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 2,\n  \"soLanDoi\": 500\n}"
+                    },
+                    "url": {
+                      "raw": "{{url}}/subscription-service/goidichvu",
+                      "host": ["{{url}}"],
+                      "path": ["subscription-service", "goidichvu"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-GDV-11] - thoiGianDung = 365",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                          "let res = pm.response.json();",
+                          "if (res && res.maGoi) { pm.environment.set(\"maGoi\", res.maGoi); }"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"tenGoi\": \"Gói 10 Năm\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 365,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35654,7 +35752,9 @@
                           "let res = pm.response.json();",
                           "if (res && res.maGoi) { pm.environment.set(\"maGoi\", res.maGoi); }"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -35668,7 +35768,44 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói 1 Lần\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 1\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói 1 Lần\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 1\n}"
+                    },
+                    "url": {
+                      "raw": "{{url}}/subscription-service/goidichvu",
+                      "host": ["{{url}}"],
+                      "path": ["subscription-service", "goidichvu"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-GDV-42] - soLanDoi = 2",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 200\", function () { pm.response.to.have.status(200); });",
+                          "let res = pm.response.json();",
+                          "if (res && res.maGoi) { pm.environment.set(\"maGoi\", res.maGoi); }"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"tenGoi\": \"Gói 2 Lần\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 2\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35689,7 +35826,9 @@
                           "let res = pm.response.json();",
                           "if (res && res.maGoi) { pm.environment.set(\"maGoi\", res.maGoi); }"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -35703,7 +35842,297 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói 1000 Lần\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 1000\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói 1000 Lần\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 1000\n}"
+                    },
+                    "url": {
+                      "raw": "{{url}}/subscription-service/goidichvu",
+                      "host": ["{{url}}"],
+                      "path": ["subscription-service", "goidichvu"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-GDV-35] - tenGoi = 2 ký tự (min+)",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "let res = pm.response.json();",
+                          "pm.test(\"maGoi is returned\", function () {",
+                          "    pm.expect(res.maGoi).to.exist;",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    },
+                    {
+                      "listen": "prerequest",
+                      "script": {
+                        "exec": [
+                          "const unique = Date.now().toString().slice(-8);",
+                          "pm.environment.set(\"tenGoi_minplus\", \"A\" + unique);"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{accessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"tenGoi\": \"{{tenGoi_minplus}}\",\n  \"moTa\": \"Mô tả test min+\",\n  \"gia\": 5000000,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
+                    },
+                    "url": {
+                      "raw": "{{url}}/subscription-service/goidichvu",
+                      "host": ["{{url}}"],
+                      "path": ["subscription-service", "goidichvu"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-GDV-36] - moTa = 254 ký tự (max-)",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "let res = pm.response.json();",
+                          "pm.test(\"maGoi is returned\", function () {",
+                          "    pm.expect(res.maGoi).to.exist;",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    },
+                    {
+                      "listen": "prerequest",
+                      "script": {
+                        "exec": [
+                          "const len = 254;",
+                          "const prefix = \"MoTa_\" + Date.now() + \"_\";",
+                          "const padding = \"A\".repeat(Math.max(0, len - prefix.length));",
+                          "pm.environment.set(\"moTa_maxminus\", prefix + padding);"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{accessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"tenGoi\": \"GDV36_{{timestamp}}\",\n  \"moTa\": \"{{moTa_maxminus}}\",\n  \"gia\": 5000000,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
+                    },
+                    "url": {
+                      "raw": "{{url}}/subscription-service/goidichvu",
+                      "host": ["{{url}}"],
+                      "path": ["subscription-service", "goidichvu"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-GDV-37] - gia = 9,999,999 (max-)",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "let res = pm.response.json();",
+                          "pm.test(\"maGoi is returned\", function () {",
+                          "    pm.expect(res.maGoi).to.exist;",
+                          "});",
+                          "pm.test(\"gia is correct\", function () {",
+                          "    pm.expect(res.gia).to.eql(9999999);",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{accessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"tenGoi\": \"GDV37_{{timestamp}}\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 9999999,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
+                    },
+                    "url": {
+                      "raw": "{{url}}/subscription-service/goidichvu",
+                      "host": ["{{url}}"],
+                      "path": ["subscription-service", "goidichvu"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-GDV-38] - thoiGianDung = 364 (max-)",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "let res = pm.response.json();",
+                          "pm.test(\"maGoi is returned\", function () {",
+                          "    pm.expect(res.maGoi).to.exist;",
+                          "});",
+                          "pm.test(\"thoiGianDung is correct\", function () {",
+                          "    pm.expect(res.thoiGianDung).to.eql(364);",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{accessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"tenGoi\": \"GDV38_{{timestamp}}\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000,\n  \"thoiGianDung\": 364,\n  \"soLanDoi\": 500\n}"
+                    },
+                    "url": {
+                      "raw": "{{url}}/subscription-service/goidichvu",
+                      "host": ["{{url}}"],
+                      "path": ["subscription-service", "goidichvu"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[BVA-GDV-39] - soLanDoi = 999 (max-)",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 200\", function () {",
+                          "    pm.response.to.have.status(200);",
+                          "});",
+                          "let res = pm.response.json();",
+                          "pm.test(\"maGoi is returned\", function () {",
+                          "    pm.expect(res.maGoi).to.exist;",
+                          "});",
+                          "pm.test(\"soLanDoi is correct\", function () {",
+                          "    pm.expect(res.soLanDoi).to.eql(999);",
+                          "});"
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{accessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"tenGoi\": \"GDV39_{{timestamp}}\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000,\n  \"thoiGianDung\":183,\n  \"soLanDoi\": 999\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35769,7 +36198,9 @@
                         "exec": [
                           "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -35783,7 +36214,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35802,7 +36233,9 @@
                         "exec": [
                           "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -35816,7 +36249,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": null,\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": null,\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35867,7 +36300,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"{{longString256}}\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"{{longString256}}\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35902,7 +36335,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Test 17\",\n  \"moTa\": null,\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Test 17\",\n  \"moTa\": null,\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35952,7 +36385,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Test\",\n  \"moTa\": \"{{longStringMoTa256}}\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Test\",\n  \"moTa\": \"{{longStringMoTa256}}\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -35971,7 +36404,9 @@
                         "exec": [
                           "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -35985,7 +36420,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Giá 0\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 0.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Giá 0\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 0.0,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -36004,7 +36439,9 @@
                         "exec": [
                           "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -36018,7 +36455,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Giá Âm\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": -0.1,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Giá Âm\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": -0.1,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -36037,7 +36474,9 @@
                         "exec": [
                           "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -36051,7 +36490,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Giá Null\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": null,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Giá Null\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": null,\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -36070,7 +36509,9 @@
                         "exec": [
                           "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -36084,7 +36525,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói 0 Ngày\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 0,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói 0 Ngày\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 0,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -36103,7 +36544,9 @@
                         "exec": [
                           "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -36117,7 +36560,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Thời Gian Âm\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": -1,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Thời Gian Âm\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": -1,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -36136,7 +36579,9 @@
                         "exec": [
                           "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -36150,7 +36595,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Thời Gian Null\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": null,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Thời Gian Null\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": null,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -36169,7 +36614,9 @@
                         "exec": [
                           "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -36183,7 +36630,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói 0 Lần\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 0\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói 0 Lần\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 0\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -36202,7 +36649,9 @@
                         "exec": [
                           "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -36216,7 +36665,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Số Lần Âm\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": -1\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Số Lần Âm\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": -1\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -36235,7 +36684,9 @@
                         "exec": [
                           "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -36249,7 +36700,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Số Lần Null\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": null\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Số Lần Null\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": null\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -36268,7 +36719,9 @@
                         "exec": [
                           "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -36282,7 +36735,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -36350,7 +36803,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Premium 50 ký tự danh nghĩa abcde fghij klmno\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Premium 50 ký tự danh nghĩa abcde fghij klmno\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 5000000.0,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -36369,7 +36822,9 @@
                         "exec": [
                           "pm.test(\"Status code is 400\", function () { pm.response.to.have.status(400); });"
                         ],
-                        "type": "text/javascript"
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
                       }
                     }
                   ],
@@ -36383,7 +36838,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n  \"tenGoi\": \"Gói Sai Kiểu Giá\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": \"abc\",\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                      "raw": "{\n  \"tenGoi\": \"Gói Sai Kiểu Giá\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": \"abc\",\n  \"thoiGianDung\": 183,\n  \"soLanDoi\": 500\n}"
                     },
                     "url": {
                       "raw": "{{url}}/subscription-service/goidichvu",
@@ -36548,6 +37003,150 @@
                       "raw": "{{url}}/subscription-service/goidichvu/999999",
                       "host": ["{{url}}"],
                       "path": ["subscription-service", "goidichvu", "999999"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[RBVA-GDV-43] - gia = 10,000,001 (max+)",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{accessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"tenGoi\": \"GDV40_{{timestamp}}\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 10000001,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 10\n}"
+                    },
+                    "url": {
+                      "raw": "{{url}}/subscription-service/goidichvu",
+                      "host": ["{{url}}"],
+                      "path": ["subscription-service", "goidichvu"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[RBVA-GDV-44] - thoiGianDung = 366 (max+)",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{accessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"tenGoi\": \"GDV41_{{timestamp}}\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000,\n  \"thoiGianDung\": 366,\n  \"soLanDoi\": 10\n}"
+                    },
+                    "url": {
+                      "raw": "{{url}}/subscription-service/goidichvu",
+                      "host": ["{{url}}"],
+                      "path": ["subscription-service", "goidichvu"]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "[RBVA-GDV-45] - soLanDoi = 1001 (max+)",
+                  "event": [
+                    {
+                      "listen": "test",
+                      "script": {
+                        "exec": [
+                          "pm.test(\"Status code is 400\", function () {",
+                          "    pm.response.to.have.status(400);",
+                          "});",
+                          ""
+                        ],
+                        "type": "text/javascript",
+                        "packages": {},
+                        "requests": {}
+                      }
+                    }
+                  ],
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{accessToken}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"tenGoi\": \"GDV42_{{timestamp}}\",\n  \"moTa\": \"Mô tả\",\n  \"gia\": 100000,\n  \"thoiGianDung\": 30,\n  \"soLanDoi\": 1001\n}"
+                    },
+                    "url": {
+                      "raw": "{{url}}/subscription-service/goidichvu",
+                      "host": ["{{url}}"],
+                      "path": ["subscription-service", "goidichvu"]
                     }
                   },
                   "response": []
@@ -40740,67 +41339,195 @@
       "value": ""
     },
     {
-      "key": "fcmTokenId_feedbackflow",
+      "key": "dataloaiXe_createflow",
       "value": ""
     },
     {
-      "key": "dataEmployee_hoTen_createflow",
+      "key": "datamaTaiXe_createflow",
       "value": ""
     },
     {
-      "key": "dataEmployee_email_createflow",
+      "key": "random_vin_update",
       "value": ""
     },
     {
-      "key": "dataEmployee_soDienThoai_createflow",
+      "key": "random_bienSo_update",
       "value": ""
     },
     {
-      "key": "dataEmployee_gioiTinh_createflow",
+      "key": "dataloaiXe_updateflow",
       "value": ""
     },
     {
-      "key": "dataEmployee_matKhau_createflow",
+      "key": "maPhuongTien",
       "value": ""
     },
     {
-      "key": "dataEmployee_ngaySinh_createflow",
+      "key": "createdVehicleVin",
       "value": ""
     },
     {
-      "key": "dataEmployee_bangCap_createflow",
+      "key": "createdVehicleBienSo",
       "value": ""
     },
     {
-      "key": "dataEmployee_kinhNghiem_createflow",
+      "key": "createdVehicleLoaiXe",
       "value": ""
     },
     {
-      "key": "dataEmployee_maTram_createflow",
+      "key": "createdVehicleMaTaiXe",
       "value": ""
     },
     {
-      "key": "dataEmployee_hoTen_updateflow",
+      "key": "dataVehicle_vin_updated",
       "value": ""
     },
     {
-      "key": "dataEmployee_email_updateflow",
+      "key": "dataVehicle_bienSo_updated",
       "value": ""
     },
     {
-      "key": "dataEmployee_soDienThoai_updateflow",
+      "key": "dataVehicle_loaiXe_updated",
       "value": ""
     },
     {
-      "key": "dataEmployee_gioiTinh_updateflow",
+      "key": "dataVehicle_vin_createflow_2",
       "value": ""
     },
     {
-      "key": "dataEmployee_matKhau_updateflow",
+      "key": "dataVehicle_bienSo_createflow_2",
       "value": ""
     },
     {
-      "key": "dataEmployee_ngaySinh_updateflow",
+      "key": "dataVehicle_loaiXe_createflow_2",
+      "value": ""
+    },
+    {
+      "key": "dataVehicle_maTaiXe_createflow_2",
+      "value": ""
+    },
+    {
+      "key": "dataVehicle_maPin_createflow_2",
+      "value": ""
+    },
+    {
+      "key": "validation_vehicle_id",
+      "value": ""
+    },
+    {
+      "key": "validation_dup_bienSo",
+      "value": ""
+    },
+    {
+      "key": "dataVehicle_loaiXe_created",
+      "value": ""
+    },
+    {
+      "key": "dataVehicle_maTaiXe_created",
+      "value": ""
+    },
+    {
+      "key": "validation_vehicle_id_deleted",
+      "value": ""
+    },
+    {
+      "key": "update_vehicle_vin",
+      "value": ""
+    },
+    {
+      "key": "update_vehicle_bienSo",
+      "value": ""
+    },
+    {
+      "key": "update_vehicle_loaiXe",
+      "value": ""
+    },
+    {
+      "key": "update_vehicle_maTaiXe",
+      "value": ""
+    },
+    {
+      "key": "update_vehicle_id",
+      "value": ""
+    },
+    {
+      "key": "dup_update_vehicle_vin",
+      "value": ""
+    },
+    {
+      "key": "dup_update_vehicle_bienSo",
+      "value": ""
+    },
+    {
+      "key": "dup_update_vehicle_loaiXe",
+      "value": ""
+    },
+    {
+      "key": "dup_update_vehicle_maTaiXe",
+      "value": ""
+    },
+    {
+      "key": "dup_update_vehicle_id",
+      "value": ""
+    },
+    {
+      "key": "dup_update_vin_value",
+      "value": ""
+    },
+    {
+      "key": "dup_update_bienSo_value",
+      "value": ""
+    },
+    {
+      "key": "update_vehicle_vin_new",
+      "value": ""
+    },
+    {
+      "key": "update_vehicle_bienSo_new",
+      "value": ""
+    },
+    {
+      "key": "update_vehicle_loaiXe_new",
+      "value": ""
+    },
+    {
+      "key": "update_vehicle_maTaiXe_new",
+      "value": ""
+    },
+    {
+      "key": "maTaiXe",
+      "value": ""
+    },
+    {
+      "key": "__flowAuthAt",
+      "value": ""
+    },
+    {
+      "key": "createdFcmToken_feedbackflow",
+      "value": ""
+    },
+    {
+      "key": "createdFcmRole_feedbackflow",
+      "value": ""
+    },
+    {
+      "key": "createdFcmUser_feedbackflow",
+      "value": ""
+    },
+    {
+      "key": "updatedFcmToken_feedbackflow",
+      "value": ""
+    },
+    {
+      "key": "updatedFcmRole_feedbackflow",
+      "value": ""
+    },
+    {
+      "key": "createdBaoCao_tieuDe_feedbackflow",
+      "value": ""
+    },
+    {
+      "key": "createdBaoCao_noiDung_feedbackflow",
       "value": ""
     }
   ]
