@@ -29,6 +29,24 @@ async function openAddBatteryModal(I) {
 }
 
 /* =========================
+   HELPER: Chọn trạm đầu tiên có giá trị
+========================= */
+async function selectFirstStation(I) {
+    await I.executeScript(() => {
+        const select = document.querySelector('select[name="maTram"]');
+        if (!select) return;
+        const options = select.options;
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value && options[i].value !== '') {
+                select.selectedIndex = i;
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+                return;
+            }
+        }
+    });
+}
+
+/* =========================
    HELPER: Điền chuỗi dài
 ========================= */
 async function fillLongText(I, selector, text) {
@@ -79,7 +97,7 @@ Scenario('BVA-PIN-01_Nominal', async ({ I }) => {
     I.fillField('input[name="newSucKhoe"]', '85');
 
     I.selectOption('select[name="newTinhTrang"]', 'đầy');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
 
     await I.executeScript(() => {
         const input = document.querySelector('input[name="ngayNhapKho"]');
@@ -106,7 +124,7 @@ Scenario('BVA-PIN-02_loaiPin_Min_1', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'A2');
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Thêm pin mới thành công', 15);
 });
@@ -117,7 +135,7 @@ Scenario('BVA-PIN-03_loaiPin_MinPlus1', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'A3');
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Thêm pin mới thành công', 15);
 });
@@ -138,13 +156,12 @@ Scenario('BVA-PIN-04_loaiPin_MaxMinus1', async ({ I }) => {
 
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
 
     I.click('Xác nhận');
 
     I.waitForText('Thêm pin mới thành công', 15);
 });
-
 
 // 5. loaiPin Max = 100 ký tự
 Scenario('BVA-PIN-05_loaiPin_Max_100', async ({ I }) => {
@@ -162,7 +179,7 @@ Scenario('BVA-PIN-05_loaiPin_Max_100', async ({ I }) => {
 
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
 
     I.click('Xác nhận');
 
@@ -175,7 +192,7 @@ Scenario('BVA-PIN-06_dungLuong_Min_0.1', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_' + Date.now());
     I.fillField('input[name="dungLuong"]', '0.1');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Thêm pin mới thành công', 15);
 });
@@ -186,7 +203,7 @@ Scenario('BVA-PIN-07_dungLuong_MinPlus1', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_' + Date.now());
     I.fillField('input[name="dungLuong"]', '0.2');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Thêm pin mới thành công', 15);
 });
@@ -197,7 +214,7 @@ Scenario('BVA-PIN-08_dungLuong_MaxMinus1', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_' + Date.now());
     I.fillField('input[name="dungLuong"]', '149.9');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Thêm pin mới thành công', 15);
 });
@@ -208,7 +225,7 @@ Scenario('BVA-PIN-09_dungLuong_Max_150', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_' + Date.now());
     I.fillField('input[name="dungLuong"]', '150.0');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Thêm pin mới thành công', 15);
 });
@@ -219,7 +236,7 @@ Scenario('BVA-PIN-10_sucKhoe_Min_0', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_' + Date.now());
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '0');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Thêm pin mới thành công', 15);
 });
@@ -230,7 +247,7 @@ Scenario('BVA-PIN-11_sucKhoe_MinPlus1', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_' + Date.now());
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '0.1');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Thêm pin mới thành công', 15);
 });
@@ -241,7 +258,7 @@ Scenario('BVA-PIN-12_sucKhoe_MaxMinus1', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_' + Date.now());
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '99.9');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Thêm pin mới thành công', 15);
 });
@@ -252,7 +269,7 @@ Scenario('BVA-PIN-13_sucKhoe_Max_100', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_' + Date.now());
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '100');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Thêm pin mới thành công', 15);
 });
@@ -264,7 +281,7 @@ Scenario('BVA-PIN-14_tinhTrang_DangSac', async ({ I }) => {
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '80');
     I.selectOption('select[name="newTinhTrang"]', 'đang sạc');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Thêm pin mới thành công', 15);
 });
@@ -276,7 +293,7 @@ Scenario('BVA-PIN-15_tinhTrang_BaoTri', async ({ I }) => {
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '80');
     I.selectOption('select[name="newTinhTrang"]', 'bảo trì');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Thêm pin mới thành công', 15);
 });
@@ -288,7 +305,7 @@ Scenario('BVA-PIN-16_tinhTrang_Day', async ({ I }) => {
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '80');
     I.selectOption('select[name="newTinhTrang"]', 'đầy');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Thêm pin mới thành công', 15);
 });
@@ -300,7 +317,7 @@ Scenario('BVA-PIN-17_loaiPin_Rong', async ({ I }) => {
     I.clearField('input[name="loaiPin"]');
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Vui lòng nhập hoặc chọn model', 5);
 });
@@ -311,7 +328,7 @@ Scenario('BVA-PIN-18_loaiPin_Whitespace', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', '   ');
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Vui lòng nhập hoặc chọn model', 5);
 });
@@ -332,7 +349,7 @@ Scenario('BVA-PIN-19_loaiPin_101KyTu_ApiError', async ({ I }) => {
 
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
 
     I.click('Xác nhận');
 
@@ -347,7 +364,7 @@ Scenario('BVA-PIN-20_dungLuong_0', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_' + Date.now());
     I.fillField('input[name="dungLuong"]', '0');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Vui lòng nhập dung lượng hợp lệ', 5);
 });
@@ -358,7 +375,7 @@ Scenario('BVA-PIN-21_dungLuong_Am', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_' + Date.now());
     I.fillField('input[name="dungLuong"]', '-0.1');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Vui lòng nhập dung lượng hợp lệ', 5);
 });
@@ -369,7 +386,7 @@ Scenario('BVA-PIN-22_dungLuong_Empty', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_' + Date.now());
     I.clearField('input[name="dungLuong"]');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Vui lòng nhập dung lượng hợp lệ', 5);
 });
@@ -380,7 +397,7 @@ Scenario('BVA-PIN-23_sucKhoe_Minus01', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_' + Date.now());
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '-0.1');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Giá trị sức khỏe phải trong khoảng 0–100%', 5);
 });
@@ -391,7 +408,7 @@ Scenario('BVA-PIN-24_sucKhoe_100.1', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_' + Date.now());
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '100.1');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Giá trị sức khỏe phải trong khoảng 0–100%', 5);
 });
@@ -406,7 +423,7 @@ Scenario('LOGIC-PIN-25_ngayNhapKho_TuongLai', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_FUTURE_IN_' + Date.now());
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
 
     await setReactInputValue(I, 'input[name="ngayNhapKho"]', '2099-12-31');
 
@@ -420,7 +437,7 @@ Scenario('LOGIC-PIN-26_ngayBaoDuong_TuongLai', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_FUTURE_MAINT_' + Date.now());
     I.fillField('input[name="dungLuong"]', '5');
     I.fillField('input[name="newSucKhoe"]', '80');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
 
     await setReactInputValue(I, 'input[name="ngayBaoDuongGanNhat"]', '2099-12-31');
 
@@ -448,7 +465,7 @@ Scenario('LOGIC-PIN-28_AutoFill_Model', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', dynamicModel);
     I.fillField('input[name="dungLuong"]', '65');
     I.fillField('input[name="newSucKhoe"]', '95');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.click('Xác nhận');
     I.waitForText('Thêm pin mới thành công', 15);
 
@@ -484,7 +501,7 @@ Scenario('LOGIC-PIN-31_Custom_LogNote', async ({ I }) => {
     I.fillField('input[name="loaiPin"]', 'BAT_LOG_' + Date.now());
     I.fillField('input[name="dungLuong"]', '10');
     I.fillField('input[name="newSucKhoe"]', '100');
-    I.selectOption('select[name="maTram"]', '1');
+    await selectFirstStation(I);
     I.fillField('input[name="logNote"]', 'Test tạo pin kèm ghi chú đặc biệt');
     I.click('Xác nhận');
     I.waitForText('Thêm pin mới thành công', 15);

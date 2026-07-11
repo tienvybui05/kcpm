@@ -111,6 +111,11 @@ public class PinService implements IPinService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dung lượng pin phải lớn hơn 0");
         }
 
+        // THÊM DÒNG NÀY:
+        if (pin.getDungLuong() != null && pin.getDungLuong() > 150.0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dung lượng pin không được vượt quá 150 kWh");
+        }
+
         if (isNullOrOutOfRange(pin.getSucKhoe(), 0, 100)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sức khỏe pin phải nằm trong khoảng 0 đến 100");
         }

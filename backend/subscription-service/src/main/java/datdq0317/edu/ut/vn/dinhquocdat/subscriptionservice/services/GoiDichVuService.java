@@ -44,13 +44,25 @@ public class GoiDichVuService implements IGoiDichVuService {
         if (goi.getGia() == null || goi.getGia() <= 0) {
             throw new RuntimeException("Giá gói dịch vụ phải lớn hơn 0!");
         }
+        // THÊM DÒNG NÀY:
+        if (goi.getGia() > 10000000) {
+            throw new RuntimeException("Giá gói dịch vụ không được vượt quá 10.000.000!");
+        }
 
         if (goi.getThoiGianDung() == null || goi.getThoiGianDung() <= 0) {
             throw new RuntimeException("Thời gian dùng phải lớn hơn 0!");
         }
+        // THÊM DÒNG NÀY:
+        if (goi.getThoiGianDung() > 365) {
+            throw new RuntimeException("Thời gian dùng không được vượt quá 365 ngày!");
+        }
 
         if (goi.getSoLanDoi() == null || goi.getSoLanDoi() <= 0) {
             throw new RuntimeException("Số lần đổi pin phải lớn hơn 0!");
+        }
+        // THÊM DÒNG NÀY:
+        if (goi.getSoLanDoi() > 1000) {
+            throw new RuntimeException("Số lần đổi pin không được vượt quá 1000!");
         }
     }
 
