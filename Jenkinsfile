@@ -25,7 +25,7 @@ pipeline {
         JIRA_MODE               = 'jira'
         HEADLESS                = 'true'
 
-        WEB_URL                 = 'http://host.docker.internal:3000'
+        WEB_URL                 = 'http://35.240.156.187'
         API_URL                 = 'http://gateway:8080'
     }
 
